@@ -785,6 +785,10 @@ eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpac
 /******/ 		};
 /******/ 	})();
 /******/ 	
+/******/ 	/* webpack/runtime/compat */
+/******/ 	
+/******/ 	if (typeof __webpack_require__ !== 'undefined') __webpack_require__.ab = "/home/ridit/Desktop/Anantam/.webpack/renderer" + "/native_modules/";
+/******/ 	
 /************************************************************************/
 /******/ 	
 /******/ 	// startup

@@ -28207,6 +28207,10 @@ module.exports = require("zlib");
 /******/ 		};
 /******/ 	})();
 /******/ 	
+/******/ 	/* webpack/runtime/compat */
+/******/ 	
+/******/ 	if (typeof __webpack_require__ !== 'undefined') __webpack_require__.ab = __dirname + "/native_modules/";
+/******/ 	
 /************************************************************************/
 /******/ 	
 /******/ 	// startup
