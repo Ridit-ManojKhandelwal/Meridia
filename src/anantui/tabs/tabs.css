@@ -1,0 +1,111 @@
+:root {
+  --tab-text-color: #000;
+  --tab-active-bg: #202428;
+  --tab-hover-bg: #e0e0e0;
+  --tab-hover-color: #d1d1d1;
+}
+
+.dark .anant-tabs-wrapper {
+  --tab-text-color: #abb2bf;
+  --tab-active-bg: #fff;
+  --tab-hover-bg: #444;
+  --tab-hover-color: #fff;
+}
+
+.anant-tabs-wrapper,
+.anant-tab,
+.anant-tabs,
+.active {
+  transition:
+    color 0.2s,
+    background-color 0.2s,
+    border 0.2s;
+}
+
+.anant-tabs-wrapper {
+  display: flex;
+  justify-content: space-between;
+}
+
+.anant-tabs-wrapper .anant-tabs {
+  display: flex;
+}
+
+.anant-tabs-wrapper .anant-tabs .anant-tab {
+  display: flex;
+  padding: 12px;
+  transition:
+    background 0.2s,
+    color 0.2s;
+  color: var(--tab-text-color);
+  cursor: pointer;
+}
+
+.anant-tabs-wrapper .anant-tabs .anant-tab:hover {
+  color: var(--tab-hover-color);
+}
+
+.anant-tabs-wrapper .anant-tabs .anant-tab button {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+}
+
+.anant-tabs-wrapper .anant-tabs .anant-tab button:hover svg {
+  fill: var(--tab-hover-color);
+}
+
+.anant-tabs-wrapper .anant-tabs .anant-tab button svg {
+  fill: var(--tab-text-color);
+}
+
+.anant-tabs-wrapper .anant-tabs .active {
+  border-bottom: 2px solid var(--tab-text-color);
+}
+
+.anant-tabs-wrapper .anant-tabs .active button svg {
+  fill: var(--tab-active-bg);
+}
+
+.anant-tabs-wrapper .anant-add-tab-btn {
+  background: transparent;
+  border: none;
+  color: var(--tab-text-color);
+  border-right: 1px solid var(--tab-text-color);
+  cursor: pointer;
+}
+
+.anant-tabs-wrapper .anant-tabs-buttons {
+  display: flex;
+  align-items: center;
+}
+
+.anant-tabs-wrapper .anant-tabs-buttons .anant-custom-buttons {
+  display: flex;
+  align-items: center;
+}
+
+.anant-tabs-wrapper .anant-tabs-buttons .anant-custom-button button {
+  background: transparent;
+  color: var(--tab-text-color);
+  font-size: 16px;
+  border: none;
+  cursor: pointer;
+}
+
+.anant-tabs-wrapper .anant-tabs-buttons .anant-custom-button:first-child {
+  border-right: 1px solid var(--tab-text-color);
+}
+
+.anant-tabs-wrapper .anant-tabs-buttons .anant-custom-button button:hover {
+  color: var(--tab-hover-color);
+}
+
+.anant-tabs-wrapper .anant-tabs-buttons .anant-add-tab-btn svg {
+  width: 20px;
+  height: 20px;
+}
+
+.anant-tabs-wrapper .anant-tabs-buttons .anant-add-tab-btn:hover {
+  color: var(--tab-hover-color);
+}
