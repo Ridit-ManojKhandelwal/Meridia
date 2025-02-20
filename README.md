@@ -11,7 +11,7 @@ Anantam is a modern, high-performance IDE designed for Python development. It ai
 ## Installation
 
 ```sh
-git clone https://github.com/your-username/anantam.git
+git clone https://github.com/Ridit-ManojKhandelwal/Anantam.git
 cd anantam
 yarn install
 yarn start
