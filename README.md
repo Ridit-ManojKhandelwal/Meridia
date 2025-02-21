@@ -33,14 +33,6 @@ Start Anantam
   yarn start
 ```
 
-
-## Requirements
-
-| Requirement | Note                |
-| :-------- | :------------------------- |
-| `Windows 8+` |  You can test below Windows 8. |
-| `Python` |  Some functionality may not work without python. |
-
 ## Modding
 
 Modding / Extensions are currently not supported but in the 2.0 version it will be available. But for now you can customize the code.
