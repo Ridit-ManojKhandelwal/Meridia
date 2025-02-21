@@ -1,6 +1,7 @@
 # Anantam
 
 Anantam is a modern, high-performance IDE designed for Python development. It aims to provide a seamless coding experience with advanced features, speed optimization, and a clean UI. Built in Typescript.
+---
 Anantam is made for making Python feel like magic, so simple and powerful, one click deployment and a package manager, and inbuilt terminal.
 ## Run Locally
 
