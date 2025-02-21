@@ -6,14 +6,12 @@ AnantUI is a custom UI framework designed specifically for Anantam, providing a 
 
 - **Custom UI Components** – Optimized UI elements tailored for Anantam.
 - **Theming Support** – Easily customizable themes to match user preferences.
-- **Lightweight and Fast** – Designed for high performance with minimal overhead.
 - **Seamless Integration** – Works natively with Anantam without additional configuration.
-- **Responsive Design** – Ensures a great experience across different screen sizes.
 - **Accessibility Support** – Built-in accessibility features for an inclusive user experience.
 
 ## Installation
 
-To install AnantUI within Anantam, follow these steps:
+To install AnantUI, follow these steps:
 
 ```bash
   yarn add @mnovus/ui
