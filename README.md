@@ -1,27 +1,71 @@
 # Anantam
 
-Anantam is a modern, high-performance IDE designed for Python development. It aims to provide a seamless coding experience with advanced features, speed optimization, and a clean UI. Built,  Typescript
+Anantam is a modern, high-performance IDE designed for Python development. It aims to provide a seamless coding experience with advanced features, speed optimization, and a clean UI. Built in Typescript.
+## Run Locally
 
-## Features
+Clone the project
 
-- **Python Support**: Integrated with Python language support.
-- **Customization**: Modern UI with a user-friendly experience.
-- **Performance**: Optimized for speed in Electron with TypeScript.
-
-## Installation
-
-```sh
-git clone https://github.com/Ridit-ManojKhandelwal/Anantam.git
-cd anantam
-yarn install
-yarn start
+```bash
+  git clone https://github.com/Ridit-ManojKhandelwal/Anantam.git
 ```
 
+Go to the project directory
+
+```bash
+  cd Anantam
+```
+
+Install dependencies
+
+```bash
+  yarn install
+```
+
+Rebuild dependencies
+
+```bash
+  yarn rebuild
+```
+
+Start Anantam
+
+```bash
+  yarn start
+```
+
+
+## Requirements
+
+| Requirement | Note                |
+| :-------- | :------------------------- |
+| `Windows 8+` |  You can test below Windows 8. |
+| `Python` |  Some functionality may not work without python. |
+
+## Modding
+
+Modding / Extensions are currently not supported but in the 2.0 version it will be available. But for now you can customize the code.
 ## Contributing
 
-We welcome contributions! See [CONTRIBUTING.md](CONTRIBUTING.md) for details.
+Contributions are always welcome :)
 
-## License
+See `contributing.md` for ways to get started.
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+### Docs for contributing
 
+You can add a pull request with the title of the feature you add or the bug / error you fixed.
+
+# Note
+
+Please note that creating a Pull Request to fix these features does not guarantee its merge. Please don't open a Pull Request unless you are confident you've done a good jo
+## Optimizations
+
+What optimizations did you make in your code? E.g. refactors, performance improvements, accessibility
+
+
+## Issues
+
+##### If you have any issue or want to have a new feature you can go to the issue's section and register a issue or a feature you will be replied in under 24 hours. 
+
+---
+
+[Issues Page](https://github.com/Ridit-ManojKhandelwal/Anantam/issues)
