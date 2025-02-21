@@ -49,9 +49,6 @@ You can add a pull request with the title of the feature you add or the bug / er
 # Note
 
 Please note that creating a Pull Request to fix these features does not guarantee its merge. Please don't open a Pull Request unless you are confident you've done a good jo
-## Optimizations
-
-What optimizations did you make in your code? E.g. refactors, performance improvements, accessibility
 
 
 ## Issues
