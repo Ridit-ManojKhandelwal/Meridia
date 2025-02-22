@@ -3,7 +3,8 @@ name: Release Anantam
 on:
   push:
     tags:
-      - "v*.*.*" 
+      - "v*"
+  workflow_dispatch: # Allows manual trigger
 
 jobs:
   build:
