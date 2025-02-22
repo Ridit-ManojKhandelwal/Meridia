@@ -1,7 +1,8 @@
 import { useEffect, useRef } from "react";
-import PerfectScrollbar from "react-perfect-scrollbar";
+
 import { Terminal as XTerminal } from "xterm";
 import { FitAddon } from "xterm-addon-fit";
+
 import "@xterm/xterm/css/xterm.css";
 
 export const Terminal = () => {
@@ -39,7 +40,6 @@ export const Terminal = () => {
 
     term.open(terminalRef.current);
 
-    // Ensure the terminal fits properly after opening
     fit.fit();
 
     term.write("Anantam builtin terminal >> ");
@@ -53,13 +53,12 @@ export const Terminal = () => {
       }
     };
 
-    // Initial resize request after terminal mount
     sendResizeRequest();
 
     const handleResize = () => {
       if (fitAddon.current) {
         fitAddon.current.fit();
-        sendResizeRequest(); // Send new terminal size to the main process
+        sendResizeRequest();
       }
     };
 

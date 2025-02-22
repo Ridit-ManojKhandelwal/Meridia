@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Tools } from "../tools";
-import { Terminal } from "../terminal-section/terminal";
+import { Terminal } from "../terminal-section";
 
 import PerfectScrollbar from "react-perfect-scrollbar";
 import { ExportOutlined, ImportOutlined } from "@ant-design/icons/lib";
@@ -10,7 +10,7 @@ import {
   update_tools_window_state,
 } from "../../shared/rdx-slice";
 import { Tabs } from "../../anantui/index";
-import Output from "../output-section/output";
+import Output from "../output-section";
 
 export const BottomTabs = () => {
   const currentTab = useAppSelector((state) => state.main.current_bottom_tab);

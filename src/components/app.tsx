@@ -3,15 +3,16 @@ import { Splitter } from "antd";
 import FooterComponent from "./sections/footer/";
 import ContentSection from "./sections/content/";
 
-import { BottomTabs } from "./bottom-section/tab";
+import { BottomTabs } from "./bottom-section";
 
 import Navigator from "./sidebar-sections/navigator";
 import Enviornment from "./sidebar-sections/enviornment/";
 
+import Header from "./sections/header/";
+
 import AnantChat from "../anantchat";
 
 import { useAppSelector } from "../shared/hooks";
-import Header from "./sections/header/";
 
 export const App = () => {
   const sidebarActive = useAppSelector((state) => state.main.sidebar_active);
