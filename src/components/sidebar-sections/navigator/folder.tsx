@@ -185,9 +185,9 @@ const Folder = React.memo(({ handleInsertNode = () => {}, explorer }: any) => {
             </div>
           )}
           {sortedItems.map((exp: any) => (
-            <span key={exp.id}>
+            <div key={exp.id} className="folder-container">
               <Folder handleInsertNode={handleInsertNode} explorer={exp} />
-            </span>
+            </div>
           ))}
         </div>
       </div>

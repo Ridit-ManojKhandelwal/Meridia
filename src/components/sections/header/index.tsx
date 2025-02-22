@@ -6,14 +6,13 @@ import { useAppDispatch } from "../../../shared/hooks";
 import { useAppSelector } from "../../../shared/hooks";
 
 import { update_terminal_active } from "../../../shared/rdx-slice";
-import { update_env_vars } from "../../../shared/rdx-slice";
 import { update_current_bottom_tab } from "../../../shared/rdx-slice";
 
 import "./header.css";
 
 export default function Header() {
   const [menuItems, setMenuItems] = useState([]);
-  const [menuVisible, setMenuVisible] = useState(true);
+  const [menuVisible, setMenuVisible] = useState(false);
   const [activeSubmenu, setActiveSubmenu] = useState<number | null>(null);
   const menuRef = useRef(null);
   const runRef = useRef<HTMLButtonElement>(null);
@@ -103,7 +102,7 @@ export default function Header() {
                       {item.submenu.map((sub: any, subIndex: any) => (
                         <div
                           key={subIndex}
-                          className={`submenu-item ${sub.type === "separator" && "separator"}`}
+                          className={` ${sub.type === "separator" ? "separator" : "submenu-item"}`}
                           onClick={(e) => {
                             e.stopPropagation();
                             handleMenuClick(sub.id);

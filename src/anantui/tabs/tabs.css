@@ -25,6 +25,7 @@
 .anant-tabs-wrapper {
   display: flex;
   justify-content: space-between;
+  border-bottom: 1px solid #4a4a4a;
 }
 
 .anant-tabs-wrapper .anant-tabs {
@@ -33,12 +34,15 @@
 
 .anant-tabs-wrapper .anant-tabs .anant-tab {
   display: flex;
+  align-items: center;
+  margin: 12px 4px;
   padding: 12px;
   transition:
     background 0.2s,
     color 0.2s;
   color: var(--tab-text-color);
   cursor: pointer;
+  height: 10px;
 }
 
 .anant-tabs-wrapper .anant-tabs .anant-tab:hover {
@@ -59,9 +63,9 @@
   fill: var(--tab-text-color);
 }
 
-.anant-tabs-wrapper .anant-tabs .active {
+.anant-tabs-wrapper .anant-tabs .anant-tab-active {
   background: #2e2d2d;
-  height: 80%;
+  border-radius: 8px;
 }
 
 .anant-tabs-wrapper .anant-tabs .active button svg {

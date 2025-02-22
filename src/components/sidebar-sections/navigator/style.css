@@ -1,12 +1,15 @@
 :root {
-  --pycharm-bg: #313335;
-  --pycharm-text: #a9b7c6;
-  --pycharm-hover: #3c3f41;
-  --pycharm-selected: #2b2b2b;
-  --pycharm-blue: #4a7ebb;
+  --bg: #313335;
+  --text: #a9b7c6;
+  --hover: #3c3f41;
+  --selected: #2b2b2b;
+  --blue: #4a7ebb;
 }
 
-/* Folder styles */
+.folder-children {
+  margin-left: 12px;
+}
+
 .folder {
   display: flex;
   align-items: center;
@@ -14,7 +17,7 @@
   padding: 4px 8px;
   margin: 2px 0;
   font-size: 15px;
-  color: var(--pycharm-text);
+  color: var(--text);
   cursor: pointer;
   white-space: nowrap;
   user-select: none;
@@ -23,7 +26,7 @@
 }
 
 .folder:hover {
-  background-color: var(--pycharm-hover);
+  background-color: var(--hover);
 }
 
 .folder > span {
@@ -35,10 +38,9 @@
   width: 15px;
   height: 15px;
   margin-right: 6px;
-  fill: var(--pycharm-text);
+  fill: var(--text);
 }
 
-/* File styles */
 .file {
   padding: 4px 8px;
   display: flex;
@@ -47,7 +49,7 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  color: var(--pycharm-text);
+  color: var(--text);
   border-radius: 3px;
   cursor: pointer;
   background-color: transparent;
@@ -57,14 +59,13 @@
   width: 15px;
   height: 15px;
   margin-right: 6px;
-  fill: var(--pycharm-text);
+  fill: var(--text);
 }
 
 .file:hover {
-  background-color: var(--pycharm-hover);
+  background-color: var(--hover);
 }
 
-/* Button inside folder (e.g. for expanding/collapsing) */
 .folder > div > button {
   font-size: 14px;
   background-color: transparent;
@@ -72,21 +73,20 @@
   cursor: pointer;
   padding: 4px;
   border-radius: 3px;
-  color: var(--pycharm-text);
+  color: var(--text);
 }
 
 .folder > div > button:hover {
-  background-color: var(--pycharm-hover);
+  background-color: var(--hover);
 }
 
 .folder > div > button > svg {
   font-size: 14px;
   width: 16px;
   height: 16px;
-  fill: var(--pycharm-text);
+  fill: var(--text);
 }
 
-/* Input container (e.g. search/filter box) */
 .inputContainer {
   display: flex;
   align-items: center;
@@ -94,12 +94,12 @@
   margin-top: 5px;
   padding: 2px 4px;
   border-radius: 3px;
-  background-color: var(--pycharm-bg);
+  background-color: var(--bg);
 }
 
 .inputContainer > span {
   font-size: 13px;
-  color: var(--pycharm-text);
+  color: var(--text);
 }
 
 .inputContainer__input {
@@ -108,20 +108,19 @@
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 3px;
   outline: none;
-  background: var(--pycharm-bg);
-  color: var(--pycharm-text);
+  background: var(--bg);
+  color: var(--text);
 }
 
 .inputContainer__input:focus {
-  border-color: var(--pycharm-blue);
+  border-color: var(--blue);
 }
 
 .inputContainer__input::placeholder {
   color: rgba(169, 183, 198, 0.6);
 }
 
-/* Selected item style */
 .selected {
-  background: var(--pycharm-selected);
-  outline: 1px solid var(--pycharm-blue);
+  background: var(--selected);
+  outline: 1px solid var(--blue);
 }

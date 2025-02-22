@@ -104,4 +104,10 @@ export const renderer = {
   },
   sendMessage: (message: string) => ipcRenderer.invoke("send-message", message),
   getMenu: () => ipcRenderer.invoke("get-menu"),
+  installPackage: (name: string) => ipcRenderer.invoke("install-package", name),
+  uninstallPackage: (name: string) =>
+    ipcRenderer.invoke("uninstall-package", name),
+  getInstalledPackages: () => ipcRenderer.invoke("get-installed-packages"),
+  searchPyPiPackages: (query: string) =>
+    ipcRenderer.invoke("search-pypi-packages", query),
 };

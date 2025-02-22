@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect } from "react";
 
 import { useAppDispatch, useAppSelector } from "../../../shared/hooks";
 import { MainContext } from "../../../shared/functions";
@@ -12,12 +12,10 @@ import {
 } from "../../../shared/rdx-slice";
 import { TActiveFile } from "../../../shared/types";
 
-import FileIcon from "../../../shared/file-icon";
 import { store } from "../../../shared/store";
 
-import { ReactComponent as AngleLeftIcon } from "../../assets/svg/d-chevron.svg";
-
 import useTraverseTree from "../../../hooks/use-traverse-tree";
+
 import Folder from "./folder";
 
 const Navigator = React.memo((props: any) => {

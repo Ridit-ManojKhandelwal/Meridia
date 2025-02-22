@@ -42,9 +42,9 @@ export const Terminal = () => {
 
     fit.fit();
 
-    term.write("Anantam builtin terminal >> ");
-
     terminalInstance.current = term;
+
+    window.electron.ipcRenderer.send("terminal.keystroke", "\n");
 
     const sendResizeRequest = () => {
       if (terminalInstance.current) {

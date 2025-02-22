@@ -66,8 +66,8 @@
   z-index: 1000;
 }
 
-.submenu .separator {
-  border-bottom: 1px solid var(--file-list-bg);
+.separator {
+  border-bottom: 1px solid #fff;
 }
 
 .submenu-item {
@@ -77,6 +77,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+  margin: 4px 0;
 }
 
 .submenu-item:hover {

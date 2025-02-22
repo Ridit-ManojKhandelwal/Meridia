@@ -66,7 +66,7 @@ export const Tabs = ({
             <Tooltip text={item.name}>
               <div
                 key={item.key}
-                className={`anant-tab ${activeTab === item.key && "active"}`}
+                className={`anant-tab ${activeTab === item.key && "anant-tab-active"}`}
                 onClick={() => {
                   setActiveTab(item.key);
                   item.onTabClick();

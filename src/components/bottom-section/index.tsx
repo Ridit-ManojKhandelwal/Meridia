@@ -11,6 +11,7 @@ import {
 } from "../../shared/rdx-slice";
 import { Tabs } from "../../anantui/index";
 import Output from "../output-section";
+import PackageManager from "../package-manager";
 
 export const BottomTabs = () => {
   const currentTab = useAppSelector((state) => state.main.current_bottom_tab);
@@ -31,32 +32,22 @@ export const BottomTabs = () => {
       closable: false,
       onTabClick: () => dispatch(update_current_bottom_tab(2)),
     },
+    {
+      key: 3,
+      name: "Python Packages",
+      content: <PackageManager />,
+      closable: false,
+      onTabClick: () => dispatch(update_current_bottom_tab(3)),
+    },
   ];
-  const tools_in_a_window = useAppSelector(
-    (state) => state.main.tools_in_a_window
-  );
+  // const tools_in_a_window = useAppSelector(
+  //   (state) => state.main.tools_in_a_window
+  // );
 
   return (
     <PerfectScrollbar>
       <div className="bottom-wrapper">
-        <Tabs
-          items={tabs}
-          customButtons={
-            currentTab === 0 && [
-              <button
-                onClick={() =>
-                  dispatch(
-                    update_tools_window_state(tools_in_a_window ? false : true)
-                  )
-                }
-              >
-                {tools_in_a_window ? <ImportOutlined /> : <ExportOutlined />}
-              </button>,
-            ]
-          }
-          customButtonsTooltip={currentTab === 0 && ["Open In a New Window"]}
-          defaultTabActive={currentTab}
-        />
+        <Tabs items={tabs} />
         <div className="tab-content">
           {tabs.map((tab) => tab.key === currentTab && tab.content)}
         </div>

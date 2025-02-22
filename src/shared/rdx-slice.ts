@@ -29,7 +29,7 @@ const initialState: IMainState = {
   terminal_active: true,
   toolsdata: null,
   tools_in_a_window: false,
-  current_bottom_tab: 1,
+  current_bottom_tab: 3,
   output_history: [{ output: undefined }],
 };
 
