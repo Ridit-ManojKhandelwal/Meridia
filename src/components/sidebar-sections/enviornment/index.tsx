@@ -1,10 +1,13 @@
 import React from "react";
+
 import PerfectScrollbar from "react-perfect-scrollbar";
+
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
-import { useAppSelector } from "../../shared/hooks";
 
-import "../tools/styling/table.css";
+import { useAppSelector } from "../../../shared/hooks";
+
+import "../../tools/styling/table.css";
 
 const Environment = React.memo(() => {
   const rawData: any = useAppSelector((state) => state.main.env_vars.vars);

@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 
-import { useAppDispatch, useAppSelector } from "../../shared/hooks";
-import { MainContext } from "../../shared/functions";
+import { useAppDispatch, useAppSelector } from "../../../shared/hooks";
+import { MainContext } from "../../../shared/functions";
 
 import PerfectScrollbar from "react-perfect-scrollbar";
 
@@ -9,15 +9,15 @@ import {
   set_folder_structure,
   update_active_file,
   update_active_files,
-} from "../../shared/rdx-slice";
-import { TActiveFile } from "../../shared/types";
+} from "../../../shared/rdx-slice";
+import { TActiveFile } from "../../../shared/types";
 
-import FileIcon from "../../shared/file-icon";
-import { store } from "../../shared/store";
+import FileIcon from "../../../shared/file-icon";
+import { store } from "../../../shared/store";
 
 import { ReactComponent as AngleLeftIcon } from "../../assets/svg/d-chevron.svg";
 
-import useTraverseTree from "../../hooks/use-traverse-tree";
+import useTraverseTree from "../../../hooks/use-traverse-tree";
 import Folder from "./folder";
 
 const Navigator = React.memo((props: any) => {

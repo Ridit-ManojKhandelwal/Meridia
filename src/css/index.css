@@ -26,10 +26,10 @@
 }
 
 :root {
-  --main-bg: #2e3034;
-  --main-text-color: #abb2bfff;
-  --sidebar-bg: #2e3034;
-  --sidebar-text-color: #abb2bfff;
+  --main-bg: #2b2d30;
+  --main-text-color: #dcdcdc;
+  --sidebar-bg: #25272a;
+  --sidebar-text-color: #dcdcdc;
   --sidebar-icon-color: #868686;
   --sidebar-icon-active-color: #d7d7d7;
   --thumb-color: #ffffff68;

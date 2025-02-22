@@ -1,10 +1,10 @@
 import React, { useState } from "react";
-import { useAppDispatch, useAppSelector } from "../../shared/hooks";
-import { get_file_types } from "../../shared/functions";
+import { useAppDispatch, useAppSelector } from "../../../shared/hooks";
+import { get_file_types } from "../../../shared/functions";
 import {
   update_sidebar_active,
   update_terminal_active,
-} from "../../shared/rdx-slice";
+} from "../../../shared/rdx-slice";
 
 const FooterComponent = React.memo((props: any) => {
   const folder_structure = useAppSelector(

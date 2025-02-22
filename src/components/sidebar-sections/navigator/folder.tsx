@@ -1,27 +1,26 @@
 import React, { useEffect, useState } from "react";
-import { path_join } from "../../shared/functions";
+import { path_join } from "../../../shared/functions";
 
 import "./style.css";
 import {
   FileAddFilled,
   FileOutlined,
   FolderAddOutlined,
-  FolderOpenOutlined,
   FolderOutlined,
 } from "@ant-design/icons/lib";
-import FileIcon from "../../shared/file-icon";
-import FolderIcon from "../../shared/folder-icon";
+import FileIcon from "../../../shared/file-icon";
+import FolderIcon from "../../../shared/folder-icon";
 
-import { useAppDispatch, useAppSelector } from "../../shared/hooks";
-import { MainContext } from "../../shared/functions";
+import { useAppDispatch, useAppSelector } from "../../../shared/hooks";
+import { MainContext } from "../../../shared/functions";
 
 import {
   update_active_file,
   update_active_files,
-} from "../../shared/rdx-slice";
-import { TActiveFile } from "../../shared/types";
+} from "../../../shared/rdx-slice";
+import { TActiveFile } from "../../../shared/types";
 
-import { store } from "../../shared/store";
+import { store } from "../../../shared/store";
 
 const Folder = React.memo(({ handleInsertNode = () => {}, explorer }: any) => {
   const [expand, setExpand] = useState(false);

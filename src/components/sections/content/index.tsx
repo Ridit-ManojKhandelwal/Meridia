@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 
-import { useAppDispatch, useAppSelector } from "../../shared/hooks";
+import { useAppDispatch, useAppSelector } from "../../../shared/hooks";
 import {
   set_data_tool_tab,
   set_folder_structure,
@@ -10,21 +10,16 @@ import {
   update_current_bottom_tab,
   update_env_vars,
   update_terminal_active,
-} from "../../shared/rdx-slice";
-import FileIcon from "../../shared/file-icon";
+} from "../../../shared/rdx-slice";
+import FileIcon from "../../../shared/file-icon";
 
-import { IFolderStructure, TActiveFile } from "../../shared/types";
+import { IFolderStructure, TActiveFile } from "../../../shared/types";
 
-import { ReactComponent as TimesIcon } from "../../assets/svg/times.svg";
+import { ReactComponent as TimesIcon } from "../../../assets/svg/times.svg";
 
 import PerfectScrollbar from "react-perfect-scrollbar";
 
-import { MainContext } from "../../shared/functions";
-
-const SettingsComponent = React.lazy(
-  () => import("../settings-section/settings")
-);
-const DataStudio = React.lazy(() => import("../data-studio/app"));
+import { MainContext } from "../../../shared/functions";
 
 import { CaretRightFilled, SettingOutlined } from "@ant-design/icons";
 

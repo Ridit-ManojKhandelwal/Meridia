@@ -2,12 +2,12 @@ import { useEffect, useState, useRef } from "react";
 
 import { BarsOutlined, CaretRightOutlined } from "@ant-design/icons/lib";
 
-import { useAppDispatch } from "../../shared/hooks";
-import { useAppSelector } from "../../shared/hooks";
+import { useAppDispatch } from "../../../shared/hooks";
+import { useAppSelector } from "../../../shared/hooks";
 
-import { update_terminal_active } from "../../shared/rdx-slice";
-import { update_env_vars } from "../../shared/rdx-slice";
-import { update_current_bottom_tab } from "../../shared/rdx-slice";
+import { update_terminal_active } from "../../../shared/rdx-slice";
+import { update_env_vars } from "../../../shared/rdx-slice";
+import { update_current_bottom_tab } from "../../../shared/rdx-slice";
 
 import "./header.css";
 
