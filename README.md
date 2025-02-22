@@ -55,7 +55,7 @@ Please note that creating a Pull Request to fix these features does not guarante
 
 ## Issues
 
-##### If you have any issue or want to have a new feature you can go to the issue's section and register a issue or a feature you will be replied in under 24 hours. 
+##### If you have any issue or want to have a new feature you can go to the issue's section and register an issue or a feature you will be replied in under 24 hours. 
 
 ---
 
