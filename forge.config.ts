@@ -15,9 +15,10 @@ const config: ForgeConfig = {
   packagerConfig: {
     asar: true,
     name: "Anantam",
+    executableName: "anantam",
   },
   rebuildConfig: {},
-  makers: [new MakerZIP({}, ["win32", "linux"]), new MakerRpm({}), new MakerDeb({})],
+  makers: [new MakerZIP({}, ["win32", "linux"]), new MakerRpm({}), new MakerDeb({ options: {name: "anantam"}} )],
   plugins: [
     new AutoUnpackNativesPlugin({}),
     new WebpackPlugin({
