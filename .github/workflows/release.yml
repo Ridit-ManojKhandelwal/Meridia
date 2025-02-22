@@ -8,10 +8,7 @@ on:
 
 jobs:
   build:
-    strategy:
-      matrix:
-        os: [windows-latest, ubuntu-latest]  
-    runs-on: ${{ matrix.os }}
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repository
@@ -27,25 +24,28 @@ jobs:
           yarn global add node-gyp
           yarn install --frozen-lockfile --network-timeout 1000000
 
-      - name: Build for Windows
-        if: runner.os == 'Windows'
+      - name: Install Wine for Windows Cross-Compilation
+        run: |
+          sudo dpkg --add-architecture i386
+          sudo apt update
+          sudo apt install -y wine64 wine32
+
+      - name: Build Windows EXE
         run: yarn make --platform win32
-        continue-on-error: true
+        env:
+          WINEARCH: win64
+          WINEPREFIX: /root/.wine
 
-      - name: Build for Linux
-        if: runner.os == 'Linux'
+      - name: Build Linux DEB
         run: yarn make --platform linux
-        continue-on-error: true
 
-      - name: Upload EXE (Windows)
-        if: runner.os == 'Windows'
+      - name: Upload Windows EXE
         uses: actions/upload-artifact@v4
         with:
           name: anantam-windows-exe
           path: out/make/**/*.exe
 
-      - name: Upload DEB (Linux)
-        if: runner.os == 'Linux'
+      - name: Upload Linux DEB
         uses: actions/upload-artifact@v4
         with:
           name: anantam-linux-deb
@@ -60,14 +60,12 @@ jobs:
         with:
           name: anantam-windows-exe
           path: dist/
-        continue-on-error: true
 
       - name: Download Linux DEB
         uses: actions/download-artifact@v4
         with:
           name: anantam-linux-deb
           path: dist/
-        continue-on-error: true
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
