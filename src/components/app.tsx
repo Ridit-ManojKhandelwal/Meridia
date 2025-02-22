@@ -11,6 +11,7 @@ import Enviornment from "./sidebar-sections/enviornment";
 import AnantChat from "../anantchat";
 
 import { useAppSelector } from "../shared/hooks";
+import Header from "./sections/header";
 
 export const App = () => {
   const sidebarActive = useAppSelector((state) => state.main.sidebar_active);
@@ -26,7 +27,8 @@ export const App = () => {
         borderTop: "1px solid var(--border-color)",
       }}
     >
-      <FooterComponent />
+      <Header />
+        <FooterComponent />
       <div className="middle-section" style={{ flex: 1, display: "flex" }}>
         <Splitter
           style={{
@@ -42,7 +44,6 @@ export const App = () => {
                 style={{
                   height: "100vh",
                   boxShadow: "0 0 10px rgba(0, 0, 0, 0.1)",
-                  borderRight: "1px solid var(--border-color)",
                 }}
               >
                 <Splitter.Panel>
@@ -56,13 +57,10 @@ export const App = () => {
             </Splitter.Panel>
           ) : null}
 
-          {/* MAIN CONTENT AREA WITH RIGHT PANEL */}
           <Splitter.Panel>
             <Splitter layout="vertical">
-              {/* Content + Right Side Panel */}
               <Splitter.Panel>
                 <Splitter layout="horizontal">
-                  {/* Left Side - Content */}
                   <Splitter.Panel>
                     <ContentSection />
                     <div id="#editor"></div>
@@ -81,6 +79,7 @@ export const App = () => {
                   </Splitter.Panel> */}
                 </Splitter>
               </Splitter.Panel>
+                
 
               {/* Terminal at the Bottom */}
               {terminalActive && (
@@ -96,7 +95,7 @@ export const App = () => {
             </Splitter>
           </Splitter.Panel>
         </Splitter>
-      </div>
+        </div>
     </div>
   );
 };

@@ -1,6 +1,5 @@
-import React from "react";
+import React, { useCallback } from "react";
 import { MainContext } from "../shared/functions";
-import * as monaco from "monaco-editor";
 import { get_file_types } from "../shared/functions";
 import { useAppDispatch, useAppSelector } from "../shared/hooks";
 import { TSelectedFile } from "../shared/types";
@@ -9,135 +8,105 @@ import { store } from "../shared/store";
 
 import { App } from "./app";
 
+import { python } from "@codemirror/lang-python";
+import { javascript } from "@codemirror/lang-javascript";
+
+import { EditorView, keymap } from "@codemirror/view";
+import { basicSetup } from "codemirror";
+import { oneDark } from "@codemirror/theme-one-dark";
+
 const MainComponent = React.memo((props: any) => {
-  const editor_ref = React.useRef<
-    monaco.editor.IStandaloneCodeEditor | undefined
-  >();
-  const editor_files_ref = React.useRef<
-    { editor_id: string; editor_state: monaco.editor.ICodeEditorViewState }[]
+  const editor_ref = React.useRef<EditorView | null>(null);
+  const editor_instances_ref = React.useRef<
+    { filePath: string; editor: EditorView }[]
   >([]);
   const dispatch = useAppDispatch();
   const active_files = useAppSelector((state) => state.main.active_files);
+  const active_file = useAppSelector((state) => state.main.active_file);
 
-  const handle_set_editor = React.useCallback(
-    (selected_file: TSelectedFile) => {
-      console.log("selected_file", selected_file);
+  const handle_set_editor = useCallback(
+    async (selectedFile: TSelectedFile) => {
+      if (!selectedFile) return;
 
-      if (editor_ref.current != undefined) {
-        const current_model = editor_ref.current.getModel();
+      const language =
+        get_file_types(selectedFile.path) === "python"
+          ? python()
+          : javascript();
 
-        const current_model_index = editor_files_ref.current.findIndex(
-          (editor) => editor.editor_id == current_model.uri.path
-        );
-        if (current_model_index > -1) {
-          editor_files_ref.current.splice(current_model_index, 1);
-          const state = editor_ref.current.saveViewState();
-          editor_files_ref.current.push({
-            editor_id: current_model.uri.path,
-            editor_state: state,
-          });
-        } else {
-          const state = editor_ref.current.saveViewState();
-          editor_files_ref.current.push({
-            editor_id: current_model.uri.path,
-            editor_state: state,
-          });
-        }
-
-        const target_model = monaco.editor
-          .getModels()
-          .filter((model) => model.uri.path == selected_file.path);
-        if (target_model.length > 0) {
-          const _model_index = editor_files_ref.current.findIndex(
-            (editor) => editor.editor_id == selected_file.path
-          );
-          editor_ref.current.setModel(target_model[0]);
-          console.log(
-            "target_model",
-            target_model,
-            _model_index,
-            editor_files_ref.current[_model_index],
-            editor_files_ref.current
-          );
-
-          return (
-            _model_index > -1 &&
-            editor_ref.current.restoreViewState(
-              editor_files_ref.current[_model_index].editor_state
-            )
-          );
-        }
+      if (editor_ref.current) {
+        editor_ref.current.destroy();
       }
 
-      const new_model = monaco.editor.createModel(
-        selected_file.content,
-        get_file_types(selected_file.name),
-        monaco.Uri.file(selected_file.path)
-      );
-      monaco.languages.typescript.typescriptDefaults.setCompilerOptions({
-        jsx: 4,
-        baseUrl: selected_file.path.split(/\\|\//g).at(-1),
-      });
-
-      monaco.languages.typescript.typescriptDefaults.setDiagnosticsOptions({
-        noSemanticValidation: true,
-        noSyntaxValidation: true,
-      });
-
-      if (editor_ref.current == undefined) {
-        editor_ref.current = monaco.editor.create(
-          document.querySelector(".editor-container"),
-          {
-            theme: "vs-dark",
-            minimap: { enabled: false },
-            cursorBlinking: "expand",
-            cursorSmoothCaretAnimation: "on",
-          }
-        );
-      }
-      editor_ref.current.setModel(new_model);
-
-      editor_ref.current.addCommand(
-        monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyS,
-        () => {
-          console.log("will save");
-
-          return handle_save_file({
-            path: editor_ref.current.getModel().uri.path,
-            content: editor_ref.current.getValue(),
-          });
-        }
+      // Define the cursor configuration
+      const cursorConfig = EditorView.theme(
+        {
+          "&": {
+            fontSize: "16px",
+          },
+          ".cm-content": {
+            caretColor: "transparent", // Hide default caret
+          },
+        },
+        { dark: true }
       );
 
-      editor_ref.current.onDidChangeModelContent(() => {
-        const state = store.getState();
-        const activeFiles = [...state.main.active_files];
+      // Initialize the editor
+      editor_ref.current = new EditorView({
+        doc:
+          selectedFile.content ||
+          (await window.electron.get_file_content(selectedFile.path)),
+        extensions: [
+          basicSetup,
+          language,
+          oneDark,
+          cursorConfig,
 
-        const modelEditingIndex = activeFiles.findIndex(
-          (file) => file.path === editor_ref.current.getModel()?.uri?.path
-        );
+          EditorView.updateListener.of((update) => {
+            if (update.docChanged) {
+              const state = store.getState();
+              const activeFiles = [...state.main.active_files];
 
-        if (modelEditingIndex === -1) return;
+              const modelEditingIndex = activeFiles.findIndex(
+                (file) => file.path === selectedFile.path
+              );
 
-        const updatedFile = {
-          ...activeFiles[modelEditingIndex],
-          is_touched: true,
-        };
-        activeFiles[modelEditingIndex] = updatedFile;
+              if (modelEditingIndex === -1) return;
 
-        dispatch(update_active_files(activeFiles));
+              const updatedFile = {
+                ...activeFiles[modelEditingIndex],
+                is_touched: true,
+              };
+              activeFiles[modelEditingIndex] = updatedFile;
+
+              dispatch(update_active_files(activeFiles));
+            }
+          }),
+          keymap.of([
+            {
+              key: "Mod-s",
+              run: () => {
+                console.log("Saving file:", selectedFile.path);
+                handle_save_file({
+                  path: selectedFile.path,
+                  content:
+                    editor_ref.current?.state.doc.toString() ||
+                    selectedFile.content?.toString() ||
+                    "",
+                });
+                return true;
+              },
+            },
+          ]),
+        ],
+        parent: document.querySelector(".editor-container"),
       });
 
-      editor_ref.current.onDidChangeCursorPosition((e) => {
-        dispatch(
-          update_indent({
-            line: e.position.lineNumber,
-            column: e.position.column,
-          })
-        );
-      });
+      document
+        .querySelector(".editor-container")
+        ?.setAttribute("style", "height: 100%; overflow: auto;");
     },
-    [editor_ref.current, editor_files_ref.current, active_files]
+
+    [dispatch, update_active_files, update_indent]
   );
 
   const handle_save_file = React.useCallback(
@@ -153,7 +122,7 @@ const MainComponent = React.memo((props: any) => {
         };
         const _active_file = [...store.getState().main.active_files];
 
-        _active_file.splice(model_editing_index, 1);
+        _active_file.splice(model_editing_index, 0);
         model_editing.is_touched = false;
         _active_file[model_editing_index] = model_editing;
         dispatch(update_active_files(_active_file));
@@ -166,37 +135,28 @@ const MainComponent = React.memo((props: any) => {
     (selected_file: TSelectedFile) => {
       console.log("selected_file", selected_file);
 
-      const is_current_model =
-        editor_ref.current.getModel().uri.path == selected_file.path;
-      const allModels = monaco.editor.getModels();
-      const target_model_index = allModels.findIndex(
-        (model) => model.uri.path == selected_file.path
-      );
-      // monaco.editor.add
-      // monaco.editor.getModels().splice(target_model_index, 1)
-      console.log(
-        "monaco.editor.getModels().length",
-        monaco.editor.getModels().length
-      );
-      monaco.editor.getModels()[target_model_index].dispose();
+      if (!editor_ref.current) return;
 
-      console.log(
-        "monaco.editor.getModels().length",
-        monaco.editor.getModels().length
-      );
-      if (is_current_model) {
-        const new_index =
-          target_model_index == 0 ? target_model_index : target_model_index - 1;
+      const is_current_file =
+        editor_ref.current.state.doc.toString() === selected_file.content;
+      const allEditors = editor_instances_ref.current;
 
-        if (monaco.editor.getModels().length > 0) {
-          editor_ref.current.setModel(monaco.editor.getModels()[new_index]);
-        } else {
-          editor_ref.current.dispose();
-          editor_ref.current = undefined;
-        }
+      const target_index = allEditors.findIndex(
+        (editor) => editor.filePath === selected_file.path
+      );
+
+      if (target_index !== -1) {
+        allEditors[target_index].editor.destroy();
+        allEditors.splice(target_index, 1);
+      }
+
+      if (is_current_file && allEditors.length > 0) {
+        editor_ref.current = allEditors[Math.max(0, target_index - 1)].editor;
+      } else if (is_current_file) {
+        editor_ref.current = null;
       }
     },
-    [editor_ref.current]
+    []
   );
 
   const handle_win_blur = React.useCallback(() => {
@@ -208,10 +168,7 @@ const MainComponent = React.memo((props: any) => {
     blurred_active_files.forEach((file) => {
       handle_save_file({
         path: file.path,
-        content: monaco.editor
-          .getModels()
-          .find((model) => model.uri.path == file.path)
-          .getValue(),
+        content: editor_ref.current.state.doc.toString() || "",
       });
     });
   }, []);

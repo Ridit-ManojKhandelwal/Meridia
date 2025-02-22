@@ -50,6 +50,7 @@ export type TActiveFile = {
   name: string;
   icon: string;
   is_touched: boolean;
+  content: string;
 };
 
 // Editor Indent Type

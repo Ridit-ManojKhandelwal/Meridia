@@ -6,14 +6,14 @@
 
 import { ipcRenderer, contextBridge } from "electron";
 
-import { TitlebarColor, Titlebar } from "custom-electron-titlebar";
+// import { TitlebarColor, Titlebar } from "custom-electron-titlebar";
 
-window.addEventListener("DOMContentLoaded", () => {
-  new Titlebar({
-    backgroundColor: TitlebarColor.fromHex("#2e2d2d"),
-    menuSeparatorColor: TitlebarColor.WHITE,
-  });
-});
+// window.addEventListener("DOMContentLoaded", () => {
+//   new Titlebar({
+//     backgroundColor: TitlebarColor.fromHex("#2e2d2d"),
+//     menuSeparatorColor: TitlebarColor.WHITE,
+//   });
+// });
 
 ipcRenderer.on("show-tools", async (event, data) => {
   console.log("Data received:", data);
@@ -35,6 +35,14 @@ ipcRenderer.on("new-folder-opened", (event, data) => {
 
 ipcRenderer.on("received-output", (event: any, data: any) => {
   const parentDiv = document.querySelector("#output-parent");
+
+  // Remove the previous output if it exists
+  const existingOutput = document.querySelector("#output");
+  if (existingOutput) {
+    existingOutput.remove();
+  }
+
+  // Create a new output div
   const outputDiv = document.createElement("div");
   outputDiv.id = "output";
   outputDiv.innerHTML = data;
@@ -151,6 +159,7 @@ const renderer = {
     ipcRenderer.invoke("hide-tools");
   },
   sendMessage: (message: string) => ipcRenderer.invoke("send-message", message),
+  getMenu: () => ipcRenderer.invoke("get-menu"),
 };
 
 contextBridge.exposeInMainWorld("electron", renderer);

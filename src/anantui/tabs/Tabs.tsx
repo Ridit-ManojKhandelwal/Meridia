@@ -30,7 +30,7 @@ export const Tabs = ({
   defaultTabActive = 0,
 }: TabProps) => {
   const [tabs, setTabs] = useState(items);
-  const [activeTab, setActiveTab] = useState(tabs.length > 1 ? 0 : 1);
+  const [activeTab, setActiveTab] = useState(tabs.length > 1 ? 1 : 0);
 
   if (customButtonsTooltip.length > customButtons.length) {
     throw "Custom button tooltips is more than the buttons.";

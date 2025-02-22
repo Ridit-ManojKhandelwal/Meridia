@@ -62,6 +62,7 @@ const Folder = React.memo(({ handleInsertNode = () => {}, explorer }: any) => {
         path: full_path,
         name: branch_name,
         is_touched: false,
+        content: "",
       };
 
       const selected_file = {

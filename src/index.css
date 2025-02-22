@@ -22,7 +22,8 @@
 }
 
 :root {
-  --main-bg: #21252bff;
+  /* --main-bg: #21252bff; */
+  --main-bg: #2a2d31;
   --main-text-color: #abb2bfff;
   --sidebar-bg: #21252bff;
   --sidebar-text-color: #abb2bfff;
@@ -1213,7 +1214,7 @@ code.output {
 }
 
 .terminal {
-  border-top: 1px solid var(--border-color);
+  /* border-top: 1px solid var(--border-color); */
   width: "100%";
   height: "100%";
 }
@@ -1310,4 +1311,55 @@ table.dataframe td {
 
 table.dataframe tr:nth-child(even) {
   background-color: var(--file-list-bg);
+}
+
+.cm-cursor {
+  border-left: 2px solid black;
+  transition:
+    left 0.1s ease-out,
+    top 0.1s ease-out,
+    transform 0.1s ease-out;
+}
+
+@keyframes caretAnim {
+  0%,
+  100% {
+    scale: 1;
+    opacity: 1;
+  }
+  50% {
+    scale: 0.8;
+    opacity: 0;
+  }
+}
+
+/* For WebKit-based browsers (Chrome, Edge, Safari) */
+.cm-editor::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.cm-editor::-webkit-scrollbar-thumb {
+  background: rgba(100, 100, 100, 0.5);
+  border-radius: 4px;
+  transition: background 0.2s;
+}
+
+.cm-editor::-webkit-scrollbar-thumb:hover {
+  background: rgba(150, 150, 150, 0.8);
+}
+
+.cm-editor::-webkit-scrollbar-track {
+  background: rgba(30, 30, 30, 0.2);
+  border-radius: 4px;
+}
+
+/* Firefox */
+.cm-editor {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(100, 100, 100, 0.5) rgba(30, 30, 30, 0.2);
+}
+
+.editor-container {
+  height: 100%;
 }

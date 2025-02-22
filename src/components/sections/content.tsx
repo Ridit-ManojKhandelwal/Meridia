@@ -96,62 +96,72 @@ const ContentSection = React.memo((props: any) => {
   });
 
   return (
-    <PerfectScrollbar>
-      <div className="content-section">
-        {Object.keys(folder_structure).length == 0 && (
-          <div className="default-screen">
-            <button onClick={handle_open_folder}>Open Directory</button>
-          </div>
-        )}
-        {Object.keys(folder_structure).length > 0 &&
-        active_files.length == 0 ? (
-          <div className="no-selected-files">
-            <span>
+    <div
+      className="content-section"
+      style={{
+        background: "#282B34",
+      }}
+    >
+      {Object.keys(folder_structure).length == 0 && (
+        <div className="default-screen">
+          <button onClick={handle_open_folder}>Open Directory</button>
+        </div>
+      )}
+      {Object.keys(folder_structure).length > 0 && active_files.length == 0 ? (
+        <div className="no-selected-files">
+          {/* <span>
               <p>New File</p> <code>Ctrl + N</code>
             </span>
             <br />
             <span>
               <p>Open File</p> <code>Ctrl + O</code>
-            </span>
-          </div>
-        ) : (
-          <div className="content-inner">
-            <PerfectScrollbar className="page-tabs-cont" style={{ zIndex: 9 }}>
-              <div className="tabs">
-                {active_files.map((file) => (
-                  <div
-                    onClick={() => handle_set_selected_file(file)}
-                    className={
-                      "tab" + (active_file?.path == file.path ? " active" : "")
-                    }
+            </span> */}
+          <div
+            className="editor"
+            style={{
+              height: "100vh",
+            }}
+          ></div>
+        </div>
+      ) : (
+        <div className="content-inner">
+          <PerfectScrollbar className="page-tabs-cont" style={{ zIndex: 9 }}>
+            <div className="tabs">
+              {active_files.map((file) => (
+                <div
+                  onClick={() => handle_set_selected_file(file)}
+                  className={
+                    "tab" + (active_file?.path == file.path ? " active" : "")
+                  }
+                >
+                  <span>
+                    {FileIcon({ type: file.name.split(".").at(-1) || "py" })}
+                  </span>
+                  <span>{file.name}</span>
+                  <span
+                    onClick={(e) => handleRemoveFile(e as any, file)}
+                    className={file.is_touched ? "is_touched" : ""}
                   >
-                    <span>
-                      {FileIcon({ type: file.name.split(".").at(-1) })}
-                    </span>
-                    <span>{file.name}</span>
-                    <span
-                      onClick={(e) => handleRemoveFile(e as any, file)}
-                      className={file.is_touched ? "is_touched" : ""}
-                    >
-                      <TimesIcon />
-                      <span className="dot"></span>
-                    </span>
-                  </div>
-                ))}
-              </div>
-              {Object.keys(folder_structure).length != 0 && (
-                <div className="runTool">
-                  <button onClick={handleRun}>
-                    <CaretRightFilled />
-                  </button>
+                    <TimesIcon />
+                    <span className="dot"></span>
+                  </span>
                 </div>
-              )}
-            </PerfectScrollbar>
-            <div className="editor-container" id="editor" ref={editorRef}></div>
-          </div>
-        )}
-      </div>
-    </PerfectScrollbar>
+              ))}
+            </div>
+            {Object.keys(folder_structure).length != 0 && (
+              <div className="runTool">
+                <button onClick={handleRun}>
+                  <CaretRightFilled />
+                </button>
+              </div>
+            )}
+          </PerfectScrollbar>
+          <PerfectScrollbar>
+            <div className="editor-container" id="editor"></div>
+          </PerfectScrollbar>
+        </div>
+      )}
+    </div>
   );
 });
 

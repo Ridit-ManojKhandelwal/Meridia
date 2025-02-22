@@ -53,6 +53,7 @@ const Navigator = React.memo((props: any) => {
         path: full_path,
         name: branch_name,
         is_touched: false,
+        content: get_file_content,
       };
 
       const selected_file = {
@@ -104,8 +105,7 @@ const Navigator = React.memo((props: any) => {
       <div className="explorer-content-wrapper">
         <div className="content-list-outer-container">
           <div>
-            <AngleLeftIcon />
-            <span>{folder_structure?.name?.split(/\/|\\/).at(-1)}</span>
+            <span>Navigator</span>
           </div>
           <PerfectScrollbar className="scroller">
             {/* <div ref={content_main_div_ref} className="content-list main"></div> */}

@@ -60,7 +60,8 @@
 }
 
 .anant-tabs-wrapper .anant-tabs .active {
-  border-bottom: 2px solid var(--tab-text-color);
+  background: #2e2d2d;
+  height: 80%;
 }
 
 .anant-tabs-wrapper .anant-tabs .active button svg {

@@ -17,13 +17,13 @@ export const BottomTabs = () => {
   const dispatch = useAppDispatch();
 
   const tabs = [
-    {
-      key: 0,
-      name: "Tools",
-      content: <Tools />,
-      closable: false,
-      onTabClick: () => dispatch(update_current_bottom_tab(0)),
-    },
+    // {
+    //   key: 0,
+    //   name: "Tools",
+    //   content: <Tools />,
+    //   closable: false,
+    //   onTabClick: () => dispatch(update_current_bottom_tab(0)),
+    // },
     {
       key: 1,
       name: "Output",

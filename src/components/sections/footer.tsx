@@ -8,7 +8,7 @@ import {
 
 const FooterComponent = React.memo((props: any) => {
   const folder_structure = useAppSelector(
-    (state) => state.main.folder_structure,
+    (state) => state.main.folder_structure
   );
   const editor_indent = useAppSelector((state) => state.main.indent);
   const active_file = useAppSelector((state) => state.main.active_file);
@@ -19,11 +19,11 @@ const FooterComponent = React.memo((props: any) => {
   return (
     <div
       className="footer-section"
-      style={{
-        position: "absolute",
-        bottom: 0,
-        zIndex: 100,
-      }}
+      // style={{
+      //   position: "absolute",
+      //   bottom: 0,
+      //   zIndex: 100,
+      // }}
     >
       <div>
         <div className="">

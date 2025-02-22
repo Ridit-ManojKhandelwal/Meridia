@@ -7,7 +7,7 @@ const Output = React.memo(() => {
   const output = useAppSelector((state) => state.main.output_history);
 
   useEffect(() => {
-    if (output) {
+    if (output !== undefined) {
       const parentDiv = document.querySelector("#output-parent");
       const outputDiv = document.createElement("div");
       outputDiv.id = "output";

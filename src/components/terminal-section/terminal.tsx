@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import PerfectScrollbar from "react-perfect-scrollbar";
 import { Terminal as XTerminal } from "xterm";
 import { FitAddon } from "xterm-addon-fit";
@@ -38,9 +38,32 @@ export const Terminal = () => {
     term.loadAddon(fit);
 
     term.open(terminalRef.current);
-    term.write("Anantam builtin terminal >>");
+
+    // Ensure the terminal fits properly after opening
+    fit.fit();
+
+    term.write("Anantam builtin terminal >> ");
 
     terminalInstance.current = term;
+
+    const sendResizeRequest = () => {
+      if (terminalInstance.current) {
+        const { cols, rows } = terminalInstance.current;
+        window.electron.ipcRenderer.send("terminal.resize", { cols, rows });
+      }
+    };
+
+    // Initial resize request after terminal mount
+    sendResizeRequest();
+
+    const handleResize = () => {
+      if (fitAddon.current) {
+        fitAddon.current.fit();
+        sendResizeRequest(); // Send new terminal size to the main process
+      }
+    };
+
+    window.addEventListener("resize", handleResize);
 
     const handleIncomingData = (_event: any, data: string) => {
       term.write(data);
@@ -54,10 +77,10 @@ export const Terminal = () => {
 
     return () => {
       term.dispose();
-
+      window.removeEventListener("resize", handleResize);
       window.electron.ipcRenderer.removeListener(
         "terminal.incomingData",
-        handleIncomingData,
+        handleIncomingData
       );
       terminalInstance.current = null;
     };
@@ -65,7 +88,11 @@ export const Terminal = () => {
 
   return (
     <div style={{ height: "100%", width: "100%" }}>
-      <div ref={terminalRef} className="terminal" />
+      <div
+        ref={terminalRef}
+        className="terminal"
+        style={{ height: "100%", width: "100%" }}
+      />
     </div>
   );
 };

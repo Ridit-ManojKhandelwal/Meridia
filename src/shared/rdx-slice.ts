@@ -29,8 +29,8 @@ const initialState: IMainState = {
   terminal_active: true,
   toolsdata: null,
   tools_in_a_window: false,
-  current_bottom_tab: 0,
-  output_history: [{ output: "" }],
+  current_bottom_tab: 1,
+  output_history: [{ output: undefined }],
 };
 
 export const mainSlice = createSlice({
