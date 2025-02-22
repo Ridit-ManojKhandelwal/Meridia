@@ -21,11 +21,14 @@
   font-style: normal;
 }
 
+.footer-section * {
+  overflow: hidden;
+}
+
 :root {
-  /* --main-bg: #21252bff; */
-  --main-bg: #2a2d31;
+  --main-bg: #2e3034;
   --main-text-color: #abb2bfff;
-  --sidebar-bg: #21252bff;
+  --sidebar-bg: #2e3034;
   --sidebar-text-color: #abb2bfff;
   --sidebar-icon-color: #868686;
   --sidebar-icon-active-color: #d7d7d7;

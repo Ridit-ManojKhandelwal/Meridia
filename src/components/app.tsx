@@ -28,7 +28,7 @@ export const App = () => {
       }}
     >
       <Header />
-        <FooterComponent />
+      <FooterComponent />
       <div className="middle-section" style={{ flex: 1, display: "flex" }}>
         <Splitter
           style={{
@@ -44,6 +44,7 @@ export const App = () => {
                 style={{
                   height: "100vh",
                   boxShadow: "0 0 10px rgba(0, 0, 0, 0.1)",
+                  borderRight: "1px solid #181a1fff",
                 }}
               >
                 <Splitter.Panel>
@@ -79,7 +80,6 @@ export const App = () => {
                   </Splitter.Panel> */}
                 </Splitter>
               </Splitter.Panel>
-                
 
               {/* Terminal at the Bottom */}
               {terminalActive && (
@@ -88,6 +88,9 @@ export const App = () => {
                   min="10%"
                   max="50%"
                   className="terminal"
+                  style={{
+                    borderTop: "1px solid #181a1fff",
+                  }}
                 >
                   <BottomTabs />
                 </Splitter.Panel>
@@ -95,7 +98,7 @@ export const App = () => {
             </Splitter>
           </Splitter.Panel>
         </Splitter>
-        </div>
+      </div>
     </div>
   );
 };

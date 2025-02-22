@@ -80,21 +80,6 @@ const ContentSection = React.memo((props: any) => {
     [active_files, active_file]
   );
 
-  const handleRun = async () => {
-    const vars = await window.electron.get_variables(active_file.path);
-    dispatch(update_terminal_active(true));
-    dispatch(update_env_vars(vars));
-    dispatch(update_current_bottom_tab(1));
-    window.electron.run_code({
-      path: active_file.path,
-      script: "python",
-    });
-  };
-
-  window.electron.ipcRenderer.on("run-code-manual", () => {
-    handleRun();
-  });
-
   return (
     <div
       className="content-section"
@@ -116,12 +101,6 @@ const ContentSection = React.memo((props: any) => {
             <span>
               <p>Open File</p> <code>Ctrl + O</code>
             </span> */}
-          <div
-            className="editor"
-            style={{
-              height: "100vh",
-            }}
-          ></div>
         </div>
       ) : (
         <div className="content-inner">
@@ -148,13 +127,6 @@ const ContentSection = React.memo((props: any) => {
                 </div>
               ))}
             </div>
-            {Object.keys(folder_structure).length != 0 && (
-              <div className="runTool">
-                <button onClick={handleRun}>
-                  <CaretRightFilled />
-                </button>
-              </div>
-            )}
           </PerfectScrollbar>
           <PerfectScrollbar>
             <div className="editor-container" id="editor"></div>

@@ -40,8 +40,6 @@ import { PythonShell } from "python-shell";
 
 import axois from "axios";
 
-const GEMINI_API_KEY = "AIzaSyBKAm1L-44z6F7KDUNd0yYGSouMzb72S3M";
-
 // setup the titlebar main process
 // setupTitlebar();
 
@@ -932,8 +930,12 @@ const createWindow = (): void => {
     height: 600,
     width: 800,
     titleBarStyle: "hidden",
-    titleBarOverlay: true,
-    backgroundColor: "#21252bff",
+    titleBarOverlay: {
+      color: "#2b2b2b",
+      height: 40,
+      symbolColor: "#00000000",
+    },
+    backgroundColor: "#00000000",
     title: "Anantam",
     icon: path.join(__dirname, "assets/icon.ico"),
     darkTheme: true,
@@ -946,13 +948,35 @@ const createWindow = (): void => {
 
   ipcMain.handle("get-menu", () => {
     const menu = Menu.getApplicationMenu();
-    return menu?.items.map((item) => ({
+    return menu?.items.map((item, index) => ({
+      id: `menu-${index}`,
       label: item.label,
-      submenu: item.submenu?.items.map((sub) => ({
+      accelerator: item.accelerator || item.role || "",
+      type: item.type || "",
+      submenu: item.submenu?.items.map((sub, subIndex) => ({
+        id: `menu-${index}-sub-${subIndex}`,
         label: sub.label,
+        accelerator: sub.accelerator || "",
       })),
-      // onclick: item.click
     }));
+  });
+
+  ipcMain.on("menu-click", (event, menuId) => {
+    const menu = Menu.getApplicationMenu();
+    if (!menu) return;
+
+    menu.items.forEach((item, index) => {
+      if (`menu-${index}` === menuId && item.click) {
+        item.click(); // Execute the menu click function
+      }
+      if (item.submenu) {
+        item.submenu.items.forEach((sub, subIndex) => {
+          if (`menu-${index}-sub-${subIndex}` === menuId && sub.click) {
+            sub.click();
+          }
+        });
+      }
+    });
   });
 
   mainWindow.maximize();
