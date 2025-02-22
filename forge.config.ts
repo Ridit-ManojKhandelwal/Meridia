@@ -14,9 +14,10 @@ import { rendererConfig } from "./webpack.renderer.config";
 const config: ForgeConfig = {
   packagerConfig: {
     asar: true,
+    name: "Anantam",
   },
   rebuildConfig: {},
-  makers: [new MakerZIP({}, ["win32"]), new MakerRpm({}), new MakerDeb({})],
+  makers: [new MakerZIP({}, ["win32", "linux"]), new MakerRpm({}), new MakerDeb({})],
   plugins: [
     new AutoUnpackNativesPlugin({}),
     new WebpackPlugin({
