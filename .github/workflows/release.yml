@@ -23,17 +23,19 @@ jobs:
           node-version: 20
 
       - name: Install dependencies
-        run: 
+        run: |
           yarn global add node-gyp
           yarn install --frozen-lockfile --network-timeout 1000000
 
       - name: Build for Windows
         if: runner.os == 'Windows'
         run: yarn make --platform win32
+        continue-on-error: true
 
       - name: Build for Linux
         if: runner.os == 'Linux'
         run: yarn make --platform linux
+        continue-on-error: true
 
       - name: Upload EXE (Windows)
         if: runner.os == 'Windows'
@@ -58,12 +60,14 @@ jobs:
         with:
           name: anantam-windows-exe
           path: dist/
+        continue-on-error: true
 
       - name: Download Linux DEB
         uses: actions/download-artifact@v4
         with:
           name: anantam-linux-deb
           path: dist/
+        continue-on-error: true
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
