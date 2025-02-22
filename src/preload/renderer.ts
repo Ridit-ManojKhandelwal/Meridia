@@ -1,57 +1,6 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-/*---------------------------------------------------------------------------------------------
- *  Copyright (c) MNovus. All rights reserved.
- *  Licensed under the MIT License. See License.txt in the project root for license information.
- *--------------------------------------------------------------------------------------------*/
+import { ipcRenderer } from "electron";
 
-import { ipcRenderer, contextBridge } from "electron";
-
-// import { TitlebarColor, Titlebar } from "custom-electron-titlebar";
-
-// window.addEventListener("DOMContentLoaded", () => {
-//   new Titlebar({
-//     backgroundColor: TitlebarColor.fromHex("#2e2d2d"),
-//     menuSeparatorColor: TitlebarColor.WHITE,
-//   });
-// });
-
-ipcRenderer.on("show-tools", async (event, data) => {
-  console.log("Data received:", data);
-
-  event.sender.send("send-tools-data", data);
-});
-
-ipcRenderer.on("send-tools-data", (event, parsedData) => {
-  console.log("Parsed Data:", parsedData);
-});
-
-ipcRenderer.on("command-update-folder-structure", (event, data) => {
-  event.sender.send("folder-updated", data.updatedData);
-});
-
-ipcRenderer.on("new-folder-opened", (event, data) => {
-  window.location.reload();
-});
-
-ipcRenderer.on("received-output", (event: any, data: any) => {
-  const parentDiv = document.querySelector("#output-parent");
-
-  // Remove the previous output if it exists
-  const existingOutput = document.querySelector("#output");
-  if (existingOutput) {
-    existingOutput.remove();
-  }
-
-  // Create a new output div
-  const outputDiv = document.createElement("div");
-  outputDiv.id = "output";
-  outputDiv.innerHTML = data;
-  parentDiv.append(outputDiv);
-
-  ipcRenderer.send("update-output", data);
-});
-
-const renderer = {
+export const renderer = {
   openFolder: async () => {
     const folder = await ipcRenderer.invoke("open-folder");
     return folder;
@@ -161,7 +110,3 @@ const renderer = {
   sendMessage: (message: string) => ipcRenderer.invoke("send-message", message),
   getMenu: () => ipcRenderer.invoke("get-menu"),
 };
-
-contextBridge.exposeInMainWorld("electron", renderer);
-
-export type ERenderer = typeof renderer;

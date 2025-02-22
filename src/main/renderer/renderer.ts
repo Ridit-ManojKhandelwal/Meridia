@@ -4,9 +4,9 @@
  *--------------------------------------------------------------------------------------------*/
 
 import "react-perfect-scrollbar/dist/css/styles.css";
-import "./index.css";
-import "./app-entry";
+import "../../css/index.css";
+import "../entries/app-entry";
 
 console.log(
-  '👋 This message is being logged by "renderer.js", included via webpack',
+  '👋 This message is being logged by "renderer.js", included via webpack'
 );

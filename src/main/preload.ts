@@ -1,12 +1,14 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) MNovus. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import "react-perfect-scrollbar/dist/css/styles.css";
-import "./index.css";
-import "./tools-entry";
+import { contextBridge } from "electron";
+import { renderer } from "../preload/renderer";
 
-console.log(
-  '👋 This message is being logged by "tools renderer.js", included via webpack',
-);
+import "../preload/scripts";
+
+contextBridge.exposeInMainWorld("electron", renderer);
+
+export type ERenderer = typeof renderer;
