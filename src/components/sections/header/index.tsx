@@ -16,6 +16,7 @@ export default function Header() {
   const [menuVisible, setMenuVisible] = useState(true);
   const [activeSubmenu, setActiveSubmenu] = useState<number | null>(null);
   const menuRef = useRef(null);
+  const runRef = useRef<HTMLButtonElement>(null);
 
   const dispatch = useAppDispatch();
   const { active_file } = useAppSelector((state) => ({
@@ -55,6 +56,14 @@ export default function Header() {
       script: "python",
     });
   };
+
+  useEffect(() => {
+    if (active_file === undefined || active_file === null) {
+      runRef.current.disabled = true;
+    } else {
+      runRef.current.disabled = false;
+    }
+  }, [runRef, active_file]);
 
   const handleMenuClick = (menuId: string) => {
     window.electron.ipcRenderer.send("menu-click", menuId);
@@ -120,7 +129,7 @@ export default function Header() {
         )}
       </div>
       <div className="controls">
-        <button onClick={handleRun}>
+        <button onClick={handleRun} ref={runRef}>
           <CaretRightOutlined />
         </button>
       </div>

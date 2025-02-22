@@ -4613,6 +4613,11 @@ co@^4.6.0:
   resolved "https://registry.yarnpkg.com/co/-/co-4.6.0.tgz#6ea6bdf3d853ae54ccb8e47bfa0bf3f9031fb184"
   integrity sha512-QVb0dM5HvG+uaxitm8wONl7jltx8dqhfU33DcqtOZcLSVIKSDDLDi7+0LbAKiyI8hD9u42m2YxXSkMGWThaecQ==
 
+codemirror-addon-indent-guide@^1.0.1:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/codemirror-addon-indent-guide/-/codemirror-addon-indent-guide-1.0.1.tgz#2d953f59ce63b6ac4e9c73ec0f941fc689b4bf69"
+  integrity sha512-J3WEt87oGFy0FMowHTvJS4foQ5/vVy1SnmjlcHl2gS+Ujmm1mjGqXs/kj1VW8ZN4FP1LpwW0Ql18+R/G2+2Jyw==
+
 codemirror@^6.0.1:
   version "6.0.1"
   resolved "https://registry.yarnpkg.com/codemirror/-/codemirror-6.0.1.tgz#62b91142d45904547ee3e0e0e4c1a79158035a29"

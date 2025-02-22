@@ -16,7 +16,8 @@
     "test:watch": "jest --watch",
     "prettier": "prettier --write .",
     "format": "npm run prettier",
-    "build": "webpack --config webpack.config.js"
+    "build": "webpack --config webpack.config.js",
+    "dev": "webpack serve --mode development"
   },
   "devDependencies": {
     "@electron-forge/cli": "^7.4.0",
@@ -69,6 +70,7 @@
     "autoprefixer": "^10.4.20",
     "axios": "^1.7.9",
     "codemirror": "^6.0.1",
+    "codemirror-addon-indent-guide": "^1.0.1",
     "crypto-browserify": "^3.12.1",
     "custom-electron-titlebar": "^4.2.8",
     "electron-rebuild": "^3.2.9",

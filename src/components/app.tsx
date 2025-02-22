@@ -21,14 +21,14 @@ export const App = () => {
     <div
       className="wrapper-component"
       style={{
-        height: "95vh",
+        height: "99vh",
         display: "flex",
         flexDirection: "column",
         borderTop: "1px solid var(--border-color)",
+        overflow: "hidden",
       }}
     >
       <Header />
-      {/* <FooterComponent /> */}
       <div className="middle-section" style={{ flex: 1, display: "flex" }}>
         <Splitter
           style={{
@@ -43,7 +43,7 @@ export const App = () => {
               min="10%"
               max="95%"
               style={{
-                height: "100vh",
+                height: "100%",
                 boxShadow: "0 0 10px rgba(0, 0, 0, 0.1)",
                 borderRight: "1px solid #4a4a4a",
               }}
@@ -58,20 +58,7 @@ export const App = () => {
                 <Splitter layout="horizontal">
                   <Splitter.Panel>
                     <ContentSection />
-                    <div id="#editor"></div>
                   </Splitter.Panel>
-
-                  {/* Right Side - New Panel */}
-                  {/* <Splitter.Panel
-                    defaultSize="25%"
-                    min="10%"
-                    max="50%"
-                    style={{
-                      borderLeft: "1px solid var(--border-color)",
-                    }}
-                  >
-                    <AnantChat />
-                  </Splitter.Panel> */}
                 </Splitter>
               </Splitter.Panel>
 
@@ -92,6 +79,7 @@ export const App = () => {
           </Splitter.Panel>
         </Splitter>
       </div>
+      <FooterComponent />
     </div>
   );
 };

@@ -6,12 +6,9 @@
   min-height: 40px;
   max-height: 40px;
   padding: 0 16px;
-  background: linear-gradient(
-    to right,
-    #233329,
-    #2b2b2b
-  ); /* Green to dark gradient */
+  background: linear-gradient(to right, #233329, #2b2b2b);
   color: #ffffff;
+  border-bottom: 1px solid #4a4a4a;
   -webkit-app-region: drag;
 }
 

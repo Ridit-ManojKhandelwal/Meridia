@@ -543,7 +543,7 @@ body {
 .content-inner .page-tabs-cont .tab.active::after {
   content: " ";
   position: absolute;
-  height: 2px;
+  height: 4px;
   width: 100%;
   bottom: 0 !important;
   left: 0 !important;

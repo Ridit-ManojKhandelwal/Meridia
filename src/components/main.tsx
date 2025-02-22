@@ -21,8 +21,6 @@ const MainComponent = React.memo((props: any) => {
     { filePath: string; editor: EditorView }[]
   >([]);
   const dispatch = useAppDispatch();
-  const active_files = useAppSelector((state) => state.main.active_files);
-  const active_file = useAppSelector((state) => state.main.active_file);
 
   const handle_set_editor = useCallback(
     async (selectedFile: TSelectedFile) => {
@@ -93,6 +91,24 @@ const MainComponent = React.memo((props: any) => {
                     selectedFile.content?.toString() ||
                     "",
                 });
+                return true;
+              },
+            },
+            {
+              key: "Tab",
+              run: (view) => {
+                view.dispatch(view.state.replaceSelection("  "));
+                return true;
+              },
+            },
+            {
+              key: "Shift-Tab",
+              run: (view) => {
+                // Outdent selected text
+                let { from, to } = view.state.selection.main;
+                let text = view.state.sliceDoc(from, to);
+                let modifiedText = text.replace(/^ {1,2}/gm, "");
+                view.dispatch({ changes: { from, to, insert: modifiedText } });
                 return true;
               },
             },
@@ -176,6 +192,20 @@ const MainComponent = React.memo((props: any) => {
   React.useEffect(() => {
     window.addEventListener("blur", handle_win_blur);
     return () => window.removeEventListener("blur", handle_win_blur);
+  }, []);
+
+  React.useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Tab") {
+        event.preventDefault();
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
   }, []);
 
   return (
