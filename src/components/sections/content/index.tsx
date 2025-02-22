@@ -76,27 +76,14 @@ const ContentSection = React.memo((props: any) => {
   );
 
   return (
-    <div
-      className="content-section"
-      style={{
-        background: "#282B34",
-      }}
-    >
+    <div className="content-section">
       {Object.keys(folder_structure).length == 0 && (
         <div className="default-screen">
           <button onClick={handle_open_folder}>Open Directory</button>
         </div>
       )}
       {Object.keys(folder_structure).length > 0 && active_files.length == 0 ? (
-        <div className="no-selected-files">
-          {/* <span>
-              <p>New File</p> <code>Ctrl + N</code>
-            </span>
-            <br />
-            <span>
-              <p>Open File</p> <code>Ctrl + O</code>
-            </span> */}
-        </div>
+        <div></div>
       ) : (
         <div className="content-inner">
           <PerfectScrollbar className="page-tabs-cont" style={{ zIndex: 9 }}>

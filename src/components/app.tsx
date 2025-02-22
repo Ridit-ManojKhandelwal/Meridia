@@ -6,7 +6,6 @@ import ContentSection from "./sections/content/";
 import { BottomTabs } from "./bottom-section";
 
 import Navigator from "./sidebar-sections/navigator";
-import Enviornment from "./sidebar-sections/enviornment/";
 
 import Header from "./sections/header/";
 
@@ -29,7 +28,7 @@ export const App = () => {
       }}
     >
       <Header />
-      <FooterComponent />
+      {/* <FooterComponent /> */}
       <div className="middle-section" style={{ flex: 1, display: "flex" }}>
         <Splitter
           style={{
@@ -39,23 +38,17 @@ export const App = () => {
           }}
         >
           {sidebarActive ? (
-            <Splitter.Panel defaultSize="20%" min="10%" max="95%">
-              <Splitter
-                layout="vertical"
-                style={{
-                  height: "100vh",
-                  boxShadow: "0 0 10px rgba(0, 0, 0, 0.1)",
-                  borderRight: "1px solid #181a1fff",
-                }}
-              >
-                <Splitter.Panel>
-                  <Navigator />
-                </Splitter.Panel>
-
-                <Splitter.Panel>
-                  <Enviornment />
-                </Splitter.Panel>
-              </Splitter>
+            <Splitter.Panel
+              defaultSize="20%"
+              min="10%"
+              max="95%"
+              style={{
+                height: "100vh",
+                boxShadow: "0 0 10px rgba(0, 0, 0, 0.1)",
+                borderRight: "1px solid #4a4a4a",
+              }}
+            >
+              <Navigator />
             </Splitter.Panel>
           ) : null}
 
@@ -82,7 +75,6 @@ export const App = () => {
                 </Splitter>
               </Splitter.Panel>
 
-              {/* Terminal at the Bottom */}
               {terminalActive && (
                 <Splitter.Panel
                   defaultSize="30%"
@@ -90,7 +82,7 @@ export const App = () => {
                   max="50%"
                   className="terminal"
                   style={{
-                    borderTop: "1px solid #181a1fff",
+                    borderTop: "1px solid #4a4a4a",
                   }}
                 >
                   <BottomTabs />

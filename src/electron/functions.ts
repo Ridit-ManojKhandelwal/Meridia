@@ -1,6 +1,10 @@
 import { dialog } from "electron";
 
-import { mainWindow } from "../main";
+import {
+  DATASTUDIO_VARIABLES_STORE_NAME,
+  mainWindow,
+  SELECTED_FOLDER_STORE_NAME,
+} from "../main";
 
 import { get_files } from "./get_files";
 
@@ -174,13 +178,11 @@ export const run_code = ({
         const nodeProcess = spawn(`node`, [data.path]);
 
         nodeProcess.stdout.on("data", (data) => {
-          // Append to the previous output
           previousOutput += data.toString();
           mainWindow.webContents.send("received-output", previousOutput);
         });
 
         nodeProcess.stderr.on("data", (data) => {
-          // Append to the previous output
           previousOutput += `Error: ${data.toString()}`;
           mainWindow.webContents.send("received-output", previousOutput);
         });
@@ -242,63 +244,4 @@ export const run_code = ({
       }
     });
   } catch (err) {}
-};
-
-export const get_variables = ({ filePath }: { filePath: string }) => {
-  try {
-    if (!filePath.endsWith(".py")) {
-      return { error: "Only Python files are allowed." };
-    }
-
-    const fileContent = fs.readFileSync(filePath, "utf8");
-
-    const variableRegex = /^([a-zA-Z_][a-zA-Z0-9_]*)\s*=\s*(.+)$/gm;
-
-    const variables: Variable[] = [];
-    let match;
-
-    while ((match = variableRegex.exec(fileContent)) !== null) {
-      const name = match[1];
-      const rawValue = match[2].trim();
-
-      let value: any = rawValue;
-      let type = "string";
-
-      try {
-        if (!isNaN(Number(rawValue))) {
-          value = Number(rawValue);
-          type = "number";
-        } else if (rawValue === "True" || rawValue === "False") {
-          value = rawValue === "True";
-          type = "boolean";
-        } else if (rawValue === "None") {
-          value = null;
-          type = "null";
-        } else if (rawValue.startsWith("[") && rawValue.endsWith("]")) {
-          value = JSON.parse(rawValue.replace(/'/g, '"'));
-          type = "list";
-        } else if (rawValue.startsWith("{") && rawValue.endsWith("}")) {
-          value = JSON.parse(rawValue.replace(/'/g, '"'));
-          type = "dict";
-        } else if (rawValue.startsWith("(") && rawValue.endsWith(")")) {
-          value = JSON.parse(
-            rawValue.replace(/'/g, '"').replace(/^\(|\)$/g, "[") + "]"
-          );
-          type = "tuple";
-        } else if (rawValue.startsWith("set(") && rawValue.endsWith(")")) {
-          const setContent = rawValue.slice(4, -1).replace(/^\{|\}$/g, "");
-          value = new Set(JSON.parse(`[${setContent.replace(/'/g, '"')}]`));
-          type = "set";
-        } else {
-          value = rawValue.replace(/^["']|["']$/g, "");
-        }
-      } catch (parseError) {}
-
-      variables.push({ name, type, value });
-    }
-
-    return { vars: variables };
-  } catch (err) {
-    return { error: "Failed to process the file." };
-  }
 };

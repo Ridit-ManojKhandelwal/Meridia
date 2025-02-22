@@ -21,7 +21,6 @@ ipcRenderer.on("new-folder-opened", (event, data) => {
 ipcRenderer.on("received-output", (event: any, data: any) => {
   const parentDiv = document.querySelector("#output-parent");
 
-  // Remove the previous output if it exists
   const existingOutput = document.querySelector("#output");
   if (existingOutput) {
     existingOutput.remove();

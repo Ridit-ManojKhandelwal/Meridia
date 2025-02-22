@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { path_join } from "../../../shared/functions";
 
-import "./style.css";
 import {
   FileAddFilled,
   FileOutlined,
@@ -21,6 +20,8 @@ import {
 import { TActiveFile } from "../../../shared/types";
 
 import { store } from "../../../shared/store";
+
+import "./style.css";
 
 const Folder = React.memo(({ handleInsertNode = () => {}, explorer }: any) => {
   const [expand, setExpand] = useState(false);

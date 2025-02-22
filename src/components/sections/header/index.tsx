@@ -48,9 +48,7 @@ export default function Header() {
   }, [menuVisible]);
 
   const handleRun = async () => {
-    const vars = await window.electron.get_variables(active_file.path);
     dispatch(update_terminal_active(true));
-    dispatch(update_env_vars(vars));
     dispatch(update_current_bottom_tab(1));
     window.electron.run_code({
       path: active_file.path,

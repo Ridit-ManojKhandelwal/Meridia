@@ -1,20 +1,29 @@
+:root {
+  --pycharm-bg: #313335;
+  --pycharm-text: #a9b7c6;
+  --pycharm-hover: #3c3f41;
+  --pycharm-selected: #2b2b2b;
+  --pycharm-blue: #4a7ebb;
+}
+
+/* Folder styles */
 .folder {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 2px 4px;
-  margin-left: 6px;
-  font-size: 13px;
-  color: var(--sidebar-text-color);
+  padding: 4px 8px;
+  margin: 2px 0;
+  font-size: 15px;
+  color: var(--pycharm-text);
   cursor: pointer;
-  text-wrap: nowrap;
+  white-space: nowrap;
   user-select: none;
-  -webkit-user-select: none;
   border-radius: 3px;
+  background-color: transparent;
 }
 
 .folder:hover {
-  background-color: rgba(255, 255, 255, 0.08);
+  background-color: var(--pycharm-hover);
 }
 
 .folder > span {
@@ -23,34 +32,39 @@
 }
 
 .folder span svg {
-  width: 13px;
-  height: 13px;
+  width: 15px;
+  height: 15px;
   margin-right: 6px;
+  fill: var(--pycharm-text);
 }
 
+/* File styles */
 .file {
-  padding: 2px 10px;
+  padding: 4px 8px;
   display: flex;
   align-items: center;
-  font-size: 13px;
+  font-size: 15px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  color: var(--sidebar-text-color);
+  color: var(--pycharm-text);
   border-radius: 3px;
   cursor: pointer;
+  background-color: transparent;
 }
 
 .file svg {
-  width: 13px;
-  height: 13px;
+  width: 15px;
+  height: 15px;
   margin-right: 6px;
+  fill: var(--pycharm-text);
 }
 
 .file:hover {
-  background-color: rgba(255, 255, 255, 0.08);
+  background-color: var(--pycharm-hover);
 }
 
+/* Button inside folder (e.g. for expanding/collapsing) */
 .folder > div > button {
   font-size: 14px;
   background-color: transparent;
@@ -58,19 +72,21 @@
   cursor: pointer;
   padding: 4px;
   border-radius: 3px;
-  color: var(--sidebar-text-color);
+  color: var(--pycharm-text);
 }
 
 .folder > div > button:hover {
-  background-color: rgba(255, 255, 255, 0.08);
+  background-color: var(--pycharm-hover);
 }
 
 .folder > div > button > svg {
   font-size: 14px;
   width: 16px;
   height: 16px;
+  fill: var(--pycharm-text);
 }
 
+/* Input container (e.g. search/filter box) */
 .inputContainer {
   display: flex;
   align-items: center;
@@ -78,11 +94,12 @@
   margin-top: 5px;
   padding: 2px 4px;
   border-radius: 3px;
+  background-color: var(--pycharm-bg);
 }
 
 .inputContainer > span {
   font-size: 13px;
-  color: var(--sidebar-text-color);
+  color: var(--pycharm-text);
 }
 
 .inputContainer__input {
@@ -91,20 +108,20 @@
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 3px;
   outline: none;
-  background: var(--input-bg);
-  color: var(--sidebar-text-color);
-  flex-grow: 1;
+  background: var(--pycharm-bg);
+  color: var(--pycharm-text);
 }
 
 .inputContainer__input:focus {
-  border-color: #007acc;
+  border-color: var(--pycharm-blue);
 }
 
 .inputContainer__input::placeholder {
-  color: rgba(255, 255, 255, 0.6);
+  color: rgba(169, 183, 198, 0.6);
 }
 
+/* Selected item style */
 .selected {
-  background: var(--file-list-bg);
-  outline: 1px solid var(--blue);
+  background: var(--pycharm-selected);
+  outline: 1px solid var(--pycharm-blue);
 }

@@ -87,11 +87,6 @@ export const renderer = {
     },
   },
 
-  get_variables: async (path: string) => {
-    const vars = await ipcRenderer.invoke("get-variables", path);
-    return vars;
-  },
-
   get_data_studio_variables: async () => {
     const vars = await ipcRenderer.invoke("get-data-studio-variables");
     return vars;
