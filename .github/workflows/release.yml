@@ -65,9 +65,13 @@ jobs:
           name: anantam-linux
           path: dist/
 
+      - name: Get latest tag
+        id: get_latest_tag
+        run: echo "tag=$(git describe --tags --abbrev=0)" >> $GITHUB_ENV
+
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: v1.0.0
+          tag_name: ${{ env.tag }}
           files: dist/*
           token: ${{ secrets.GITHUB_TOKEN }}
