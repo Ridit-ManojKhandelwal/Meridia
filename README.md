@@ -1,8 +1,8 @@
-# Anantam
+# Meridia
 
-###### Anantam is a modern, high-performance IDE designed for Python development. It aims to provide a seamless coding experience with advanced features, speed optimization, and a clean UI. Built in Typescript.
+###### Meridia is a modern, high-performance IDE designed for Python development. It aims to provide a seamless coding experience with advanced features, speed optimization, and a clean UI. Built in Typescript.
 ---
-Anantam is made for making Python feel like magic, so simple and powerful, one click deployment and a package manager, and inbuilt terminal.
+Meridia is made for making Python feel like magic, so simple and powerful, one click deployment and a package manager, and inbuilt terminal.
 ## Run Locally
 
 Clone the project
@@ -29,7 +29,7 @@ Rebuild dependencies
   yarn rebuild
 ```
 
-Start Anantam
+Start Meridia
 
 ```bash
   yarn start
@@ -59,4 +59,4 @@ Please note that creating a Pull Request to fix these features does not guarante
 
 ---
 
-[Issues Page](https://github.com/Ridit-ManojKhandelwal/Anantam/issues)
+[Issues Page](https://github.com/Ridit-ManojKhandelwal/Meridia/issues)
