@@ -1,0 +1,79 @@
+.package-wrapper .props:first-child .section:first-child {
+  border-bottom: 1px solid #4a4a4a;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.package-wrapper .props:first-child .section:first-child input {
+  background: transparent;
+  border: none;
+  outline: none;
+  border-right: 1px solid #4a4a4a;
+  padding: 4px 12px;
+}
+
+.package-wrapper .props:first-child .section:first-child input:focus {
+  outline: none;
+}
+
+.package-wrapper .props:first-child .section:first-child button {
+  background: transparent;
+  border: none;
+  outline: none;
+  color: var(--main-text-color);
+  font-size: 16px;
+  cursor: pointer;
+  padding: 4px 12px;
+  border-right: 1px solid #4a4a4a;
+  transition: background 0.3s;
+}
+
+.package-wrapper .props:first-child .section:first-child button:hover {
+  background: #4a4a4a;
+}
+
+.package-wrapper .props:last-child {
+  display: flex;
+}
+
+.package-wrapper .props:last-child .package-content {
+  border-right: 1px solid #4a4a4a;
+  width: 40%;
+}
+
+/* .package-content .props:last-child .package-info .package-doc {
+  margin-left: 24px;
+} */
+
+.package-content .package-list-container .package-list {
+  max-height: 30vh;
+  overflow: auto;
+}
+
+.package-content .package-list-container .package-list .package-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-right: 24px;
+  border-bottom: 1px solid #4a4a4a;
+}
+
+.package-content .package-list-container .package-list .package-item button {
+  background: transparent;
+  border: none;
+  outline: none;
+  color: var(--main-text-color);
+  font-size: 16px;
+  cursor: pointer;
+  padding: 4px 12px;
+  transition: background 0.3s;
+}
+
+.package-content
+  .package-list-container
+  .package-list
+  .package-item
+  button:hover {
+  background: #4a4a4a;
+}

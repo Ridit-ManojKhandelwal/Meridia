@@ -1,5 +1,9 @@
 import { useState, useEffect } from "react";
 
+import { SearchOutlined } from "@ant-design/icons/lib";
+
+import PerfectScrollbar from "react-perfect-scrollbar";
+
 import "./index.css";
 
 export default function PackageManager() {
@@ -40,53 +44,46 @@ export default function PackageManager() {
   };
 
   return (
-    <div className="package-manager">
-      <div className="package-container">
-        <div className="package-input-container">
-          <input
-            type="text"
-            className="package-input"
-            placeholder="Enter package name"
-            value={packageName}
-            onChange={(e) => setPackageName(e.target.value)}
-          />
+    <div className="package-wrapper">
+      <div className="props">
+        <div className="section">
+          <div className="prop">
+            <input
+              type="text"
+              className="package-input"
+              placeholder="Enter package name"
+              value={packageName}
+              onChange={(e) => setPackageName(e.target.value)}
+              onSubmit={handleSearchPyPi}
+              onKeyUp={(e) => e.key === "Enter" && handleSearchPyPi()}
+            />
 
-          <button className="package-button" onClick={handleSearchPyPi}>
-            Search PyPI
-          </button>
+            <button onClick={handleSearchPyPi}>
+              <SearchOutlined />
+            </button>
+          </div>
+
+          {isSearching && (
+            <button className="package-button" onClick={handleInstall}>
+              Install
+            </button>
+          )}
         </div>
+      </div>
 
-        <pre className="package-output">{output}</pre>
+      <pre className="package-output">{output}</pre>
 
+      <div className="props">
         <div className="package-content">
-          {isSearching ? (
-            pypiPackage && (
-              <div className="package-doc">
-                <button className="package-button" onClick={handleInstall}>
-                  Install
-                </button>
-                <h3 className="package-subtitle">PyPI Package</h3>
-                <p>
-                  <b>Name:</b> {pypiPackage.name}
-                </p>
-                <p>
-                  <b>Version:</b> {pypiPackage.version}
-                </p>
-                <p>
-                  <b>Summary:</b> {pypiPackage.summary}
-                </p>
-                <p>
-                  <b>Documentation:</b> {pypiPackage.documentation || ""}
-                </p>
-              </div>
-            )
-          ) : (
+          <PerfectScrollbar>
             <div className="package-list-container">
               <h3 className="package-subtitle">Installed Packages</h3>
               <ul className="package-list">
                 {installedPackages.map((pkg: any) => (
                   <li key={pkg.name} className="package-item">
-                    {pkg.name} ({pkg.version}){" "}
+                    <div className="info">
+                      {pkg.name} ({pkg.version}){" "}
+                    </div>
                     <button
                       className="package-remove-button"
                       onClick={() => handleUninstall(pkg.name)}
@@ -96,6 +93,26 @@ export default function PackageManager() {
                   </li>
                 ))}
               </ul>
+            </div>
+          </PerfectScrollbar>
+        </div>
+
+        <div className="package-info">
+          {isSearching && (
+            <div className="package-doc">
+              <h3 className="package-subtitle">PyPI Package</h3>
+              <p>
+                <b>Name:</b> {pypiPackage.name || "pdnas"}
+              </p>
+              <p>
+                <b>Version:</b> {pypiPackage.version || "pdnas"}
+              </p>
+              <p>
+                <b>Summary:</b> {pypiPackage.summary || "pdnas"}
+              </p>
+              <p>
+                <b>Documentation:</b> {pypiPackage.documentation || ""}
+              </p>
             </div>
           )}
         </div>
