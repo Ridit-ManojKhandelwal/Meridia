@@ -42,8 +42,6 @@ export default function PackageManager() {
   return (
     <div className="package-manager">
       <div className="package-container">
-        <h2 className="package-title">Package Manager</h2>
-
         <div className="package-input-container">
           <input
             type="text"
@@ -52,9 +50,7 @@ export default function PackageManager() {
             value={packageName}
             onChange={(e) => setPackageName(e.target.value)}
           />
-          <button className="package-button" onClick={handleInstall}>
-            Install
-          </button>
+
           <button className="package-button" onClick={handleSearchPyPi}>
             Search PyPI
           </button>
@@ -66,6 +62,9 @@ export default function PackageManager() {
           {isSearching ? (
             pypiPackage && (
               <div className="package-doc">
+                <button className="package-button" onClick={handleInstall}>
+                  Install
+                </button>
                 <h3 className="package-subtitle">PyPI Package</h3>
                 <p>
                   <b>Name:</b> {pypiPackage.name}

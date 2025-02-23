@@ -2,127 +2,233 @@ import React, { useCallback } from "react";
 import { MainContext } from "../shared/functions";
 import { get_file_types } from "../shared/functions";
 import { useAppDispatch, useAppSelector } from "../shared/hooks";
-import { TSelectedFile } from "../shared/types";
+import { IFolderStructure, TSelectedFile } from "../shared/types";
 import { update_active_files, update_indent } from "../shared/rdx-slice";
 import { store } from "../shared/store";
 
+import oneDark from "../theme/oneDark.json";
+import pythonLangData from "../languages/python/python.json";
+
 import { App } from "./app";
 
-import { python } from "@codemirror/lang-python";
-import { javascript } from "@codemirror/lang-javascript";
-
-import { EditorView, keymap } from "@codemirror/view";
-import { basicSetup } from "codemirror";
-import { oneDark } from "@codemirror/theme-one-dark";
+import * as monaco from "monaco-editor";
 
 const MainComponent = React.memo((props: any) => {
-  const editor_ref = React.useRef<EditorView | null>(null);
-  const editor_instances_ref = React.useRef<
-    { filePath: string; editor: EditorView }[]
+  const editor_ref = React.useRef<
+    monaco.editor.IStandaloneCodeEditor | undefined
+  >();
+  const editor_files_ref = React.useRef<
+    { editor_id: string; editor_state: monaco.editor.ICodeEditorViewState }[]
   >([]);
   const dispatch = useAppDispatch();
+  const active_files = useAppSelector((state) => state.main.active_files);
+
+  const folder_structure = useAppSelector(
+    (state) => state.main.folder_structure
+  );
+
+  console.log("folder strucute", folder_structure);
+
+  function flattenFolderStructure(folder: any) {
+    let suggestions: any = [];
+    if (folder && Array.isArray(folder.items)) {
+      folder.items.forEach((item: any) => {
+        suggestions.push({
+          label: item.name,
+
+          kind: item.is_Folder
+            ? monaco.languages.CompletionItemKind.Folder
+            : monaco.languages.CompletionItemKind.File,
+
+          insertText: item.is_Folder ? item.name + "/" : item.name,
+          detail: item.path,
+        });
+        // Recursively add child items if this item is a folder
+        if (item.is_Folder && item.items && item.items.length > 0) {
+          suggestions = suggestions.concat(flattenFolderStructure(item));
+        }
+      });
+    }
+    return suggestions;
+  }
 
   const handle_set_editor = useCallback(
-    async (selectedFile: TSelectedFile) => {
-      if (!selectedFile) return;
+    async (selected_file: TSelectedFile) => {
+      console.log("selected_file", selected_file);
 
-      const language =
-        get_file_types(selectedFile.path) === "python"
-          ? python()
-          : javascript();
+      if (editor_ref.current != undefined) {
+        const current_model = editor_ref.current.getModel();
+        const current_model_index = editor_files_ref.current.findIndex(
+          (editor) => editor.editor_id == current_model.uri.path
+        );
 
-      if (editor_ref.current) {
-        editor_ref.current.destroy();
+        if (current_model_index > -1) {
+          editor_files_ref.current.splice(current_model_index, 1);
+          const state = editor_ref.current.saveViewState();
+          editor_files_ref.current.push({
+            editor_id: current_model.uri.path,
+            editor_state: state,
+          });
+        } else {
+          const state = editor_ref.current.saveViewState();
+          editor_files_ref.current.push({
+            editor_id: current_model.uri.path,
+            editor_state: state,
+          });
+        }
+
+        const target_model = monaco.editor
+          .getModels()
+          .filter((model) => model.uri.path == selected_file.path);
+
+        if (target_model.length > 0) {
+          const _model_index = editor_files_ref.current.findIndex(
+            (editor) => editor.editor_id == selected_file.path
+          );
+          editor_ref.current.setModel(target_model[0]);
+
+          console.log(
+            "target_model",
+            target_model,
+            _model_index,
+            editor_files_ref.current[_model_index],
+            editor_files_ref.current
+          );
+
+          return (
+            _model_index > -1 &&
+            editor_ref.current.restoreViewState(
+              editor_files_ref.current[_model_index].editor_state
+            )
+          );
+        }
       }
 
-      // Define the cursor configuration
-      const cursorConfig = EditorView.theme(
-        {
-          "&": {
-            fontSize: "16px",
-          },
-          ".cm-content": {
-            caretColor: "transparent", // Hide default caret
-          },
-        },
-        { dark: true }
+      const new_model = monaco.editor.createModel(
+        selected_file.content,
+        get_file_types(selected_file.name),
+        monaco.Uri.file(selected_file.path)
       );
 
-      // Initialize the editor
-      editor_ref.current = new EditorView({
-        doc:
-          selectedFile.content ||
-          (await window.electron.get_file_content(selectedFile.path)),
-        extensions: [
-          basicSetup,
-          language,
-          oneDark,
-          cursorConfig,
-
-          EditorView.updateListener.of((update) => {
-            if (update.docChanged) {
-              const state = store.getState();
-              const activeFiles = [...state.main.active_files];
-
-              const modelEditingIndex = activeFiles.findIndex(
-                (file) => file.path === selectedFile.path
-              );
-
-              if (modelEditingIndex === -1) return;
-
-              const updatedFile = {
-                ...activeFiles[modelEditingIndex],
-                is_touched: true,
-              };
-              activeFiles[modelEditingIndex] = updatedFile;
-
-              dispatch(update_active_files(activeFiles));
-            }
-          }),
-          keymap.of([
-            {
-              key: "Mod-s",
-              run: () => {
-                console.log("Saving file:", selectedFile.path);
-                handle_save_file({
-                  path: selectedFile.path,
-                  content:
-                    editor_ref.current?.state.doc.toString() ||
-                    selectedFile.content?.toString() ||
-                    "",
-                });
-                return true;
-              },
-            },
-            {
-              key: "Tab",
-              run: (view) => {
-                view.dispatch(view.state.replaceSelection("  "));
-                return true;
-              },
-            },
-            {
-              key: "Shift-Tab",
-              run: (view) => {
-                // Outdent selected text
-                let { from, to } = view.state.selection.main;
-                let text = view.state.sliceDoc(from, to);
-                let modifiedText = text.replace(/^ {1,2}/gm, "");
-                view.dispatch({ changes: { from, to, insert: modifiedText } });
-                return true;
-              },
-            },
-          ]),
-        ],
-        parent: document.querySelector(".editor-container"),
+      monaco.languages.typescript.typescriptDefaults.setCompilerOptions({
+        jsx: 4,
+        baseUrl: selected_file.path.split(/\\|\//g).at(-1),
       });
 
-      document
-        .querySelector(".editor-container")
-        ?.setAttribute("style", "height: 100%; overflow: auto;");
-    },
+      monaco.languages.typescript.typescriptDefaults.setDiagnosticsOptions({
+        noSemanticValidation: true,
+        noSyntaxValidation: true,
+      });
 
-    [dispatch, update_active_files, update_indent]
+      monaco.editor.defineTheme("oneDark", {
+        inherit: oneDark.inherit,
+        colors: oneDark.colors,
+        rules: oneDark.rules,
+        encodedTokensColors: oneDark.encodedTokensColors,
+        base: "vs-dark",
+      });
+
+      if (editor_ref.current == undefined) {
+        editor_ref.current = monaco.editor.create(
+          document.querySelector(".editor-container"),
+          {
+            theme: "oneDark",
+            cursorBlinking: "expand",
+            cursorSmoothCaretAnimation: "on",
+            minimap: { enabled: false },
+            quickSuggestions: { other: true, comments: true, strings: true },
+            wordBasedSuggestions: "allDocuments",
+            automaticLayout: true,
+            folding: true,
+            lineNumbers: "on",
+            largeFileOptimizations: true,
+            links: true,
+            acceptSuggestionOnEnter: "on",
+            autoClosingBrackets: "always",
+            formatOnPaste: true,
+            formatOnType: true,
+            mouseWheelZoom: true,
+            contextmenu: true,
+            bracketPairColorization: {
+              enabled: true,
+            },
+            screenReaderAnnounceInlineSuggestion: true,
+            parameterHints: {
+              enabled: true,
+            },
+          }
+        );
+      }
+
+      editor_ref.current.setModel(new_model);
+
+      editor_ref.current.addCommand(
+        monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyS,
+        () => {
+          handle_save_file({
+            path: editor_ref.current.getModel().uri.path,
+            content: editor_ref.current.getValue(),
+          });
+        }
+      );
+
+      editor_ref.current.onDidChangeModelContent((e) => {
+        const model_editing_index = store
+          .getState()
+          .main.active_files.findIndex(
+            (file) => file.path == editor_ref.current.getModel().uri.path
+          );
+        const model_editing = {
+          ...store.getState().main.active_files[model_editing_index],
+        };
+        const _active_file = [...store.getState().main.active_files];
+
+        model_editing.is_touched = true;
+        _active_file[model_editing_index] = model_editing;
+        dispatch(update_active_files(_active_file));
+      });
+
+      editor_ref.current.onDidChangeCursorPosition((e) => {
+        dispatch(
+          update_indent({
+            line: e.position.lineNumber,
+            column: e.position.column,
+          })
+        );
+      });
+
+      monaco.languages.registerCompletionItemProvider("python", {
+        provideCompletionItems: (model, position) => {
+          const word = model.getWordUntilPosition(position);
+          const range = new monaco.Range(
+            position.lineNumber,
+            word.startColumn,
+            position.lineNumber,
+            word.endColumn
+          );
+
+          const suggestions = [
+            ...pythonLangData.keywords.map((keyword) => ({
+              label: keyword,
+              kind: monaco.languages.CompletionItemKind.Keyword,
+              insertText: keyword,
+              detail: "Python Keyword",
+              range: range,
+            })),
+            ...pythonLangData.builtins.map((builtin) => ({
+              label: builtin,
+              kind: monaco.languages.CompletionItemKind.Function,
+              insertText: builtin,
+              detail: "Python Built-in",
+              range: range,
+            })),
+          ];
+
+          return { suggestions };
+        },
+      });
+    },
+    [editor_ref.current, editor_files_ref.current, active_files]
   );
 
   const handle_save_file = React.useCallback(
@@ -138,7 +244,6 @@ const MainComponent = React.memo((props: any) => {
         };
         const _active_file = [...store.getState().main.active_files];
 
-        _active_file.splice(model_editing_index, 0);
         model_editing.is_touched = false;
         _active_file[model_editing_index] = model_editing;
         dispatch(update_active_files(_active_file));
@@ -151,28 +256,37 @@ const MainComponent = React.memo((props: any) => {
     (selected_file: TSelectedFile) => {
       console.log("selected_file", selected_file);
 
-      if (!editor_ref.current) return;
-
-      const is_current_file =
-        editor_ref.current.state.doc.toString() === selected_file.content;
-      const allEditors = editor_instances_ref.current;
-
-      const target_index = allEditors.findIndex(
-        (editor) => editor.filePath === selected_file.path
+      const is_current_model =
+        editor_ref.current.getModel().uri.path == selected_file.path;
+      const allModels = monaco.editor.getModels();
+      const target_model_index = allModels.findIndex(
+        (model) => model.uri.path == selected_file.path
       );
+      // monaco.editor.add
+      // monaco.editor.getModels().splice(target_model_index, 1)
+      console.log(
+        "monaco.editor.getModels().length",
+        monaco.editor.getModels().length
+      );
+      monaco.editor.getModels()[target_model_index].dispose();
 
-      if (target_index !== -1) {
-        allEditors[target_index].editor.destroy();
-        allEditors.splice(target_index, 1);
-      }
+      console.log(
+        "monaco.editor.getModels().length",
+        monaco.editor.getModels().length
+      );
+      if (is_current_model) {
+        const new_index =
+          target_model_index == 0 ? target_model_index : target_model_index - 1;
 
-      if (is_current_file && allEditors.length > 0) {
-        editor_ref.current = allEditors[Math.max(0, target_index - 1)].editor;
-      } else if (is_current_file) {
-        editor_ref.current = null;
+        if (monaco.editor.getModels().length > 0) {
+          editor_ref.current.setModel(monaco.editor.getModels()[new_index]);
+        } else {
+          editor_ref.current.dispose();
+          editor_ref.current = undefined;
+        }
       }
     },
-    []
+    [editor_ref.current]
   );
 
   const handle_win_blur = React.useCallback(() => {
@@ -184,7 +298,10 @@ const MainComponent = React.memo((props: any) => {
     blurred_active_files.forEach((file) => {
       handle_save_file({
         path: file.path,
-        content: editor_ref.current.state.doc.toString() || "",
+        content: monaco.editor
+          .getModels()
+          .find((model) => model.uri.path == file.path)
+          .getValue(),
       });
     });
   }, []);
@@ -194,19 +311,19 @@ const MainComponent = React.memo((props: any) => {
     return () => window.removeEventListener("blur", handle_win_blur);
   }, []);
 
-  React.useEffect(() => {
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Tab") {
-        event.preventDefault();
-      }
-    };
+  //   React.useEffect(() => {
+  //     const handleKeyDown = (event: KeyboardEvent) => {
+  //       if (event.key === "Tab") {
+  //         event.preventDefault();
+  //       }
+  //     };
 
-    window.addEventListener("keydown", handleKeyDown);
+  //     window.addEventListener("keydown", handleKeyDown);
 
-    return () => {
-      window.removeEventListener("keydown", handleKeyDown);
-    };
-  }, []);
+  //     return () => {
+  //       window.removeEventListener("keydown", handleKeyDown);
+  //     };
+  //   }, []);
 
   return (
     <MainContext.Provider

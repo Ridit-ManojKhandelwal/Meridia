@@ -28,13 +28,4 @@ export const rules: Required<ModuleOptions>["rules"] = [
       },
     },
   },
-  {
-    test: /pyright.worker.js$/,
-    use: {
-      loader: "worker-loader",
-      options: {
-        inline: true,
-      },
-    },
-  },
 ];

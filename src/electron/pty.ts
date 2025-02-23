@@ -8,7 +8,7 @@ let ptyProcess: pty.IPty;
 
 export const Pty = ({ cwd, ipcMain }: { cwd: string; ipcMain: any }) => {
   try {
-    const shell = os.platform() === "win32" ? "cmd.exe" : "bash";
+    const shell = os.platform() === "win32" ? "powershell.exe" : "bash";
     const homeDir =
       os.platform() === "win32" ? process.env.USERPROFILE : process.env.HOME;
 
