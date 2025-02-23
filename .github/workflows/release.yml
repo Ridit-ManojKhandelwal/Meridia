@@ -56,13 +56,13 @@ jobs:
       - name: Download Windows EXE
         uses: actions/download-artifact@v4
         with:
-          name: anantam-windows-exe
+          name: anantam-windows
           path: dist/
 
       - name: Download Linux DEB
         uses: actions/download-artifact@v4
         with:
-          name: anantam-linux-deb
+          name: anantam-linux
           path: dist/
 
       - name: Create GitHub Release
