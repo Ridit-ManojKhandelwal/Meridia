@@ -18,7 +18,25 @@ const config: ForgeConfig = {
     executableName: "anantam",
   },
   rebuildConfig: {},
-  makers: [new MakerZIP({}, ["win32", "linux"]), new MakerRpm({}), new MakerDeb({ options: {name: "anantam"}} )],
+  makers: [
+    new MakerZIP({}, ["linux"]),
+    new MakerRpm({}),
+    new MakerDeb({ options: { name: "anantam" } }),
+    new MakerSquirrel({
+      noMsi: false,
+      name: "Anantam",
+      exe: "Anantam",
+      title: "Anantam",
+      setupExe: "AnantamSetup.exe",
+      setupMsi: "AnantamSetup.msi",
+      owners: "MNovus",
+      description: "Powerfull IDE For Python",
+      windowsSign: {
+        description: "Powerfull IDE For Python",
+      },
+      version: "1.0.0",
+    }),
+  ],
   plugins: [
     new AutoUnpackNativesPlugin({}),
     new WebpackPlugin({
