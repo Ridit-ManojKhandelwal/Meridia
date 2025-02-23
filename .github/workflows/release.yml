@@ -23,9 +23,6 @@ jobs:
         run: |
           yarn global add node-gyp
           yarn install --frozen-lockfile --network-timeout 1000000
-      - name: list files
-        run: |
-          ls /home/runner/work/Anantam/Anantam/out/make
 
       - name: Install Wine for Windows Cross-Compilation
         run: |
@@ -41,6 +38,10 @@ jobs:
 
       - name: Build Linux DEB
         run: yarn make --platform linux
+
+      - name: list files
+        run: |
+          ls /home/runner/work/Anantam/Anantam/out/make
 
       - name: Upload Windows EXE
         uses: actions/upload-artifact@v4
