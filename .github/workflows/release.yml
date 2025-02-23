@@ -35,7 +35,7 @@ jobs:
 
       - name: list files
         run: |
-          ls /home/runner/work/Anantam/Anantam/out/make
+          ls out/make
 
       - name: Upload Windows ZIP
         uses: actions/upload-artifact@v4
