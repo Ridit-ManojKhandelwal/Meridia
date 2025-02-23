@@ -24,36 +24,30 @@ jobs:
           yarn global add node-gyp
           yarn install --frozen-lockfile --network-timeout 1000000
 
-      - name: Install Wine for Windows Cross-Compilation
-        run: |
-          sudo dpkg --add-architecture i386
-          sudo apt update
-          sudo apt install -y wine64 wine32
-
-      - name: Build Windows EXE
+      - name: Build Windows ZIP
         run: yarn make --platform win32
         env:
           WINEARCH: win64
           WINEPREFIX: /root/.wine
 
-      - name: Build Linux DEB
+      - name: Build Linux ZIP
         run: yarn make --platform linux
 
       - name: list files
         run: |
           ls /home/runner/work/Anantam/Anantam/out/make
 
-      - name: Upload Windows EXE
+      - name: Upload Windows ZIP
         uses: actions/upload-artifact@v4
         with:
-          name: anantam-windows-exe
-          path: out/make/**/*.exe
+          name: anantam-windows
+          path: out/make/**/*.zip
 
-      - name: Upload Linux DEB
+      - name: Upload Linux ZIP
         uses: actions/upload-artifact@v4
         with:
-          name: anantam-linux-deb
-          path: out/make/**/*.deb
+          name: anantam-linux
+          path: out/make/**/*.zip
 
   release:
     needs: build
