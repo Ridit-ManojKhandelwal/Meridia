@@ -37,6 +37,5 @@ export const Pty = ({ cwd, ipcMain }: { cwd: string; ipcMain: any }) => {
     });
   } catch (err) {
     mainWindow.webContents.send("terminal.incomingData", err);
-    alert(err);
   }
 };
