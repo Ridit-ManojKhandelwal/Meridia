@@ -109,4 +109,4 @@ If you encounter an issue or have an idea for a new feature, feel free to report
 
 ### Quick Links:
 - [Issues Page](https://github.com/Ridit-ManojKhandelwal/Meridia/issues)
-- [Contribution Guidelines](contributing.md)
+- [Contribution Guidelines](CONTRIBUTING.md)
