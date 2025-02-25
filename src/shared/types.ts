@@ -38,6 +38,36 @@ export interface IMainState {
   tools_in_a_window: boolean;
   current_bottom_tab: number;
   output_history: [{ output: string }];
+  editorSettings: IEditorSettings;
+}
+
+export interface IEditorSettings {
+  theme: "oneDark" | string;
+  fontSize: number;
+  fontFamily: string;
+  cursorBlinking: "blink" | "smooth" | "phase" | "expand" | "solid";
+  cursorSmoothCaretAnimation: "on" | "off";
+  minimap: { enabled: boolean };
+  quickSuggestions: { other: boolean; comments: boolean; strings: boolean };
+  wordBasedSuggestions: "allDocuments" | "currentDocument" | "off";
+  automaticLayout: boolean;
+  folding: boolean;
+  lineNumbers: "on" | "off" | "relative" | "interval";
+  largeFileOptimizations: boolean;
+  links: boolean;
+  acceptSuggestionOnEnter: "on" | "smart" | "off";
+  autoClosingBrackets:
+    | "always"
+    | "languageDefined"
+    | "beforeWhitespace"
+    | "never";
+  formatOnPaste: boolean;
+  formatOnType: boolean;
+  mouseWheelZoom: boolean;
+  contextmenu: boolean;
+  bracketPairColorization: { enabled: boolean };
+  screenReaderAnnounceInlineSuggestion: boolean;
+  parameterHints: { enabled: boolean };
 }
 
 export type TDataStudioActive = {
@@ -50,7 +80,6 @@ export type TActiveFile = {
   name: string;
   icon: string;
   is_touched: boolean;
-  content: string;
 };
 
 // Editor Indent Type

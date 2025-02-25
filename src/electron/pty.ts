@@ -24,16 +24,20 @@ export const Pty = ({ cwd, ipcMain }: { cwd: string; ipcMain: any }) => {
       mainWindow.webContents.send("terminal.incomingData", data);
     });
 
-    ipcMain.on("terminal.keystroke", (event: any, key: any) => {
-      ptyProcess.write(key);
+    ipcMain.on("terminal.keystroke", (event: any, key: string) => {
+      if (typeof key === "string") {
+        ptyProcess.write(key);
+      }
     });
 
     ipcMain.on("terminal.resize", (event: any, data: any) => {
       ptyProcess.resize(data.cols, data.rows);
     });
 
-    ipcMain.on("terminal.write", (event: any, line: any) => {
-      ptyProcess.write(line);
+    ipcMain.on("terminal.write", (event: any, line: string) => {
+      if (typeof line === "string") {
+        ptyProcess.write(line);
+      }
     });
   } catch (err) {
     mainWindow.webContents.send("terminal.incomingData", err);

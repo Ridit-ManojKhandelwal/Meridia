@@ -1,19 +1,15 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef } from "react";
 
 import { useAppDispatch, useAppSelector } from "../../../shared/hooks";
 import {
-  set_data_tool_tab,
-  set_folder_structure,
-  set_settings_tab,
   update_active_file,
   update_active_files,
-  update_current_bottom_tab,
-  update_env_vars,
-  update_terminal_active,
 } from "../../../shared/rdx-slice";
 import FileIcon from "../../../shared/file-icon";
 
-import { IFolderStructure, TActiveFile } from "../../../shared/types";
+import SettingsComponent from "../../settings-section";
+
+import { TActiveFile } from "../../../shared/types";
 
 import { ReactComponent as TimesIcon } from "../../../assets/svg/times.svg";
 
@@ -21,34 +17,17 @@ import PerfectScrollbar from "react-perfect-scrollbar";
 
 import { MainContext } from "../../../shared/functions";
 
-import { CaretRightFilled, SettingOutlined } from "@ant-design/icons";
-
 const ContentSection = React.memo((props: any) => {
   const dispatch = useAppDispatch();
-  const {
-    folder_structure,
-    settings,
-    data_studio_active,
-    active_files,
-    active_file,
-    data_tab,
-  } = useAppSelector((state) => ({
-    folder_structure: state.main.folder_structure,
-    settings: state.main.settings_tab_active,
-    data_studio_active: state.main.data_studio_active.active,
-    active_files: state.main.active_files,
-    active_file: state.main.active_file,
-    data_tab: state.main.set_data_tool_type_tab,
-  }));
-
-  const editorRef = useRef<HTMLDivElement>(null);
+  const { folder_structure, active_files, active_file } = useAppSelector(
+    (state) => ({
+      folder_structure: state.main.folder_structure,
+      active_files: state.main.active_files,
+      active_file: state.main.active_file,
+    })
+  );
 
   const useMainContextIn = React.useContext(MainContext);
-
-  const handle_open_folder = React.useCallback(async () => {
-    const folder = (await window.electron.openFolder()) as IFolderStructure;
-    folder != undefined && dispatch(set_folder_structure(folder));
-  }, []);
 
   const handle_set_selected_file = React.useCallback(
     (active_file: TActiveFile) => {
@@ -61,6 +40,15 @@ const ContentSection = React.memo((props: any) => {
   const handleRemoveFile = React.useCallback(
     (e: MouseEvent, file: TActiveFile) => {
       e.stopPropagation();
+
+      if (file.name === "Settings") {
+        handleRemoveSettingsTab();
+        return;
+      }
+
+      if (file.is_touched === false) {
+      }
+
       const _clone = [...active_files];
       const index_to_remove = _clone.findIndex((_t) => _t.path == file.path);
       const targetFile = _clone[index_to_remove];
@@ -75,12 +63,60 @@ const ContentSection = React.memo((props: any) => {
     [active_files, active_file]
   );
 
+  const handleRemoveSettingsTab = React.useCallback(() => {
+    const _clone = [...active_files];
+    const index_to_remove = _clone.findIndex(
+      (file) => file.name === "Settings"
+    );
+
+    if (index_to_remove === -1) return;
+
+    _clone.splice(index_to_remove, 1);
+
+    const next_index =
+      index_to_remove === 0 ? index_to_remove : index_to_remove - 1;
+
+    if (active_file.name === "Settings") {
+      dispatch(update_active_file(_clone[next_index] || null));
+    }
+
+    dispatch(update_active_files(_clone));
+  }, [active_files, active_file]);
+
+  const handle_set_settings = React.useCallback(() => {
+    if (active_file.name !== "Settings") {
+      dispatch(
+        update_active_file({
+          name: "Settings",
+          path: "",
+          icon: "settings",
+          is_touched: false,
+        })
+      );
+    }
+  }, [active_file]);
+
+  useEffect(() => {
+    if (active_file?.name === "Settings") {
+      document.querySelector("#editor")?.setAttribute("style", "display: none");
+    } else {
+      document
+        .querySelector("#editor")
+        ?.setAttribute("style", "display: block");
+    }
+  }, [active_file, handle_set_settings]);
+
+  const handleMiddleClick = (e: any, file: any) => {
+    if (e.button === 1) {
+      e.preventDefault();
+      handleRemoveFile(e, file);
+    }
+  };
+
   return (
     <div className="content-section">
       {Object.keys(folder_structure).length == 0 && (
-        <div className="default-screen">
-          <button onClick={handle_open_folder}>Open Directory</button>
-        </div>
+        <div className="default-screen"></div>
       )}
       {Object.keys(folder_structure).length > 0 && active_files.length == 0 ? (
         <div></div>
@@ -88,15 +124,27 @@ const ContentSection = React.memo((props: any) => {
         <div className="content-inner">
           <PerfectScrollbar className="page-tabs-cont" style={{ zIndex: 9 }}>
             <div className="tabs">
-              {active_files.map((file) => (
+              {active_files.map((file, index) => (
                 <div
-                  onClick={() => handle_set_selected_file(file)}
-                  className={
-                    "tab" + (active_file?.path == file.path ? " active" : "")
+                  key={file.path}
+                  onClick={() =>
+                    file.name === "Settings"
+                      ? handle_set_settings()
+                      : handle_set_selected_file(file)
                   }
+                  className={
+                    "tab" + (active_file?.path === file.path ? " active" : "")
+                  }
+                  onMouseUp={(e) => handleMiddleClick(e, file)}
+                  draggable
                 >
                   <span>
-                    {FileIcon({ type: file.name.split(".").at(-1) || "py" })}
+                    {FileIcon({
+                      type:
+                        file.name === "Settings"
+                          ? "settings"
+                          : file.name.split(".").at(-1) || "py",
+                    })}
                   </span>
                   <span>{file.name}</span>
                   <span
@@ -110,7 +158,12 @@ const ContentSection = React.memo((props: any) => {
               ))}
             </div>
           </PerfectScrollbar>
-          <PerfectScrollbar>
+          <PerfectScrollbar
+            options={{ suppressScrollX: true, wheelPropagation: false }}
+          >
+            {active_file?.name === "Settings" && <SettingsComponent />}
+
+            <div className="python-container" id="editor"></div>
             <div className="editor-container" id="editor"></div>
           </PerfectScrollbar>
         </div>

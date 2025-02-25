@@ -8,6 +8,7 @@ import {
   TDataStudioActive,
   TEnvVars,
   DataPreviewToolsTab,
+  IEditorSettings,
 } from "./types";
 
 // Define the initial state using that type
@@ -29,8 +30,32 @@ const initialState: IMainState = {
   terminal_active: true,
   toolsdata: null,
   tools_in_a_window: false,
-  current_bottom_tab: 3,
+  current_bottom_tab: 0,
   output_history: [{ output: undefined }],
+  editorSettings: {
+    theme: "oneDark",
+    fontSize: 16,
+    fontFamily: "'Droid Sans Mono', 'monospace', monospace",
+    cursorBlinking: "expand",
+    cursorSmoothCaretAnimation: "on",
+    minimap: { enabled: false },
+    quickSuggestions: { other: true, comments: true, strings: true },
+    wordBasedSuggestions: "allDocuments",
+    automaticLayout: true,
+    folding: true,
+    lineNumbers: "on",
+    largeFileOptimizations: true,
+    links: true,
+    acceptSuggestionOnEnter: "on",
+    autoClosingBrackets: "always",
+    formatOnPaste: true,
+    formatOnType: true,
+    mouseWheelZoom: true,
+    contextmenu: true,
+    bracketPairColorization: { enabled: true },
+    screenReaderAnnounceInlineSuggestion: true,
+    parameterHints: { enabled: true },
+  },
 };
 
 export const mainSlice = createSlice({
@@ -86,6 +111,9 @@ export const mainSlice = createSlice({
         { output: state.output_history[0].output + action.payload },
       ];
     },
+    update_settings: (state, action: PayloadAction<IEditorSettings>) => {
+      state.editorSettings = action.payload;
+    },
   },
 });
 
@@ -104,6 +132,7 @@ export const {
   update_tools_window_state,
   update_current_bottom_tab,
   update_output_history,
+  update_settings,
 } = mainSlice.actions;
 
 export default mainSlice.reducer;

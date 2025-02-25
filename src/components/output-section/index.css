@@ -1,0 +1,16 @@
+.output-parent {
+  font-size: 14px;
+  color: #fff;
+  background-color: #1e1e1e;
+  padding: 20px;
+  border-radius: 8px;
+  max-height: 400px;
+  overflow: hidden;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  font-family: "Jetbrains Mono", monospace;
+  color: var(--main-text-color);
+  border-bottom: 1px solid var(--border-color);
+  margin-bottom: 12px;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}

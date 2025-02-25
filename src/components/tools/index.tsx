@@ -14,7 +14,7 @@ import {
 
 import "./styling/index.css";
 import "./styling/table.css";
-import Tooltip from "../../anantui/tooltip/Tooltip";
+import Tooltip from "../../meridiaui/tooltip/Tooltip";
 
 export const Tools = () => {
   let data = useAppSelector((state) => state.main.toolsdata);
@@ -36,7 +36,7 @@ export const Tools = () => {
   ]);
 
   const tools_in_a_window = useAppSelector(
-    (state) => state.main.tools_in_a_window,
+    (state) => state.main.tools_in_a_window
   );
 
   const [currentTool, setCurrentTool] = useState<string>("table");
@@ -46,7 +46,7 @@ export const Tools = () => {
     (event: any, data: any) => {
       dispatch(update_tools_data(data));
       console.log(data);
-    },
+    }
   );
 
   useEffect(() => {

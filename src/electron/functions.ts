@@ -157,91 +157,137 @@ export const get_file_content = ({ path }: { path: string }) => {
   try {
     console.log(path);
     const file_content = fs.readFileSync(path, "utf8");
+    console.log("got file content", file_content);
     return file_content;
   } catch (err) {
     return err;
   }
 };
 
+// export const run_code = ({
+//   data,
+//   event,
+// }: {
+//   data: {
+//     path: string;
+//   };
+//   event: Electron.IpcMainInvokeEvent;
+// }) => {
+//   try {
+//     if (!data.path.endsWith(".py")) {
+//       if (data.path.endsWith(".js")) {
+//         const nodeProcess = spawn(`node`, [data.path]);
+
+//         nodeProcess.stdout.on("data", (data) => {
+//           previousOutput += data.toString();
+//           mainWindow.webContents.send("received-output", previousOutput);
+//         });
+
+//         nodeProcess.stderr.on("data", (data) => {
+//           previousOutput += `Error: ${data.toString()}`;
+//           mainWindow.webContents.send("received-output", previousOutput);
+//         });
+
+//         nodeProcess.on("close", (code) => {
+//           if (code !== 0) {
+//             previousOutput += `Process exited with code ${code}`;
+//             mainWindow.webContents.send("received-output", previousOutput);
+//           }
+//         });
+//       }
+//       return;
+//     }
+
+//     // @ts-ignore
+//     const vars = store.get(DATASTUDIO_VARIABLES_STORE_NAME);
+
+//     const content = fs.readFileSync(data.path, "utf8");
+
+//     const words = content.split(/\s+/);
+
+//     vars.map((data: any) => {
+//       for (let word of words) {
+//         data.name === word
+//           ? event.sender.send("show-tools", data.toString())
+//           : console.log(data.name, words);
+//       }
+//     });
+//   } catch (err) {}
+
+//   try {
+//     let options = {
+//       pythonPath: PythonShell.defaultPythonPath, // Auto-detects system Python
+//       scriptPath: "", // Set script directory if needed
+//     };
+
+//     let pythonProcess = new PythonShell(data.path, options);
+
+//     pythonProcess.on("message", (message) => {
+//       previousOutput += message + "\n";
+//       mainWindow?.webContents.send("received-output", message);
+//     });
+
+//     pythonProcess.on("stderr", (stderr) => {
+//       previousOutput += `Error: ${stderr}\n`;
+//       mainWindow?.webContents.send("received-output", stderr);
+//     });
+
+//     pythonProcess.end((err, code, signal) => {
+//       if (err) {
+//         previousOutput += `Process exited with error: ${err.message}`;
+//         mainWindow?.webContents.send("received-output", err.message);
+//       } else if (code !== 0) {
+//         previousOutput += `Process exited with code ${code}`;
+//         mainWindow?.webContents.send(
+//           "received-output",
+//           `Exited with code ${code}`
+//         );
+//       }
+//     });
+//   } catch (err) {}
+// };
+
 export const run_code = ({
   data,
   event,
 }: {
-  data: {
-    path: string;
-  };
+  data: { path: string };
   event: Electron.IpcMainInvokeEvent;
 }) => {
   try {
-    if (!data.path.endsWith(".py")) {
-      if (data.path.endsWith(".js")) {
-        const nodeProcess = spawn(`node`, [data.path]);
+    const { path } = data;
+    if (!path.endsWith(".py") && !path.endsWith(".js")) return;
 
-        nodeProcess.stdout.on("data", (data) => {
-          previousOutput += data.toString();
-          mainWindow.webContents.send("received-output", previousOutput);
-        });
+    let process: any;
 
-        nodeProcess.stderr.on("data", (data) => {
-          previousOutput += `Error: ${data.toString()}`;
-          mainWindow.webContents.send("received-output", previousOutput);
-        });
+    if (path.endsWith(".js")) {
+      process = spawn("node", [path]);
+    } else {
+      process = new PythonShell(path, {
+        pythonPath: PythonShell.defaultPythonPath,
+        mode: "text",
+      });
 
-        nodeProcess.on("close", (code) => {
-          if (code !== 0) {
-            previousOutput += `Process exited with code ${code}`;
-            mainWindow.webContents.send("received-output", previousOutput);
-          }
-        });
-      }
-      return;
+      process.on("message", (message: any) => {
+        mainWindow?.webContents.send("received-output", message);
+      });
     }
 
-    // @ts-ignore
-    const vars = store.get(DATASTUDIO_VARIABLES_STORE_NAME);
+    if (process.stdout) {
+      process.stdout.on("data", (output: any) => {
+        mainWindow?.webContents.send("received-output", output.toString());
+      });
+    }
 
-    const content = fs.readFileSync(data.path, "utf8");
-
-    const words = content.split(/\s+/);
-
-    vars.map((data: any) => {
-      for (let word of words) {
-        data.name === word
-          ? event.sender.send("show-tools", data.toString())
-          : console.log(data.name, words);
-      }
-    });
-  } catch (err) {}
-
-  try {
-    let options = {
-      pythonPath: PythonShell.defaultPythonPath, // Auto-detects system Python
-      scriptPath: "", // Set script directory if needed
-    };
-
-    let pythonProcess = new PythonShell(data.path, options);
-
-    pythonProcess.on("message", (message) => {
-      previousOutput += message + "\n";
-      mainWindow?.webContents.send("received-output", message);
-    });
-
-    pythonProcess.on("stderr", (stderr) => {
-      previousOutput += `Error: ${stderr}\n`;
-      mainWindow?.webContents.send("received-output", stderr);
-    });
-
-    pythonProcess.end((err, code, signal) => {
-      if (err) {
-        previousOutput += `Process exited with error: ${err.message}`;
-        mainWindow?.webContents.send("received-output", err.message);
-      } else if (code !== 0) {
-        previousOutput += `Process exited with code ${code}`;
+    if (process.stderr) {
+      process.stderr.on("data", (error: any) => {
         mainWindow?.webContents.send(
           "received-output",
-          `Exited with code ${code}`
+          `Error: ${error.toString()}`
         );
-      }
-    });
-  } catch (err) {}
+      });
+    }
+  } catch (err) {
+    console.error("Execution Error:", err);
+  }
 };

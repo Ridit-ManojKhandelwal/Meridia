@@ -1,20 +1,26 @@
 .header-wrapper {
   display: flex;
   align-items: center;
-  justify-content: space-between;
   height: 40px;
   min-height: 40px;
   max-height: 40px;
-  padding: 0 16px;
   background: linear-gradient(to right, #233329, #2b2b2b);
   color: #ffffff;
-  border-bottom: 1px solid #4a4a4a;
+  border-bottom: 1px solid #554747;
   -webkit-app-region: drag;
 }
 
 .header-wrapper .props {
   display: flex;
+  align-items: center;
+  justify-content: center;
 }
+
+/* .header-wrapper .props .logo img {
+  width: 60px;
+  height: 60px;
+  border-right: 1px solid #4a4a4a;
+} */
 
 .header-wrapper .props button {
   -webkit-app-region: no-drag;
@@ -90,6 +96,17 @@
   gap: 12px;
 }
 
+.project-info {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.project-info:hover {
+  background: #37373c;
+}
+
 .controls {
   background: transparent;
   width: 10%;
@@ -98,7 +115,7 @@
 .controls button {
   -webkit-app-region: no-drag;
   background: transparent;
-  margin-right: 12px;
+  margin-left: 1200px;
   border: none;
   border-radius: 6px;
   font-size: 20px;
@@ -108,4 +125,28 @@
 .controls button:hover {
   -webkit-app-region: no-drag;
   background: #37373c;
+}
+
+@media (max-width: 1200px) {
+  .controls button {
+    margin-left: 600px;
+  }
+}
+
+@media (max-width: 900px) {
+  .controls button {
+    margin-left: 400px;
+  }
+}
+
+@media (max-width: 600px) {
+  .controls button {
+    margin-left: 200px;
+  }
+}
+
+@media (max-width: 400px) {
+  .controls button {
+    margin-left: 100px;
+  }
 }

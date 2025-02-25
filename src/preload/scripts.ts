@@ -18,19 +18,19 @@ ipcRenderer.on("new-folder-opened", (event, data) => {
   window.location.reload();
 });
 
-ipcRenderer.on("received-output", (event: any, data: any) => {
+ipcRenderer.on("received-output", (_, data) => {
   const parentDiv = document.querySelector("#output-parent");
+  if (!parentDiv) return;
 
-  const existingOutput = document.querySelector("#output");
-  if (existingOutput) {
-    existingOutput.remove();
+  let outputDiv = document.querySelector("#output");
+  if (!outputDiv) {
+    outputDiv = document.createElement("div");
+    outputDiv.id = "output";
+    parentDiv.appendChild(outputDiv);
   }
 
-  // Create a new output div
-  const outputDiv = document.createElement("div");
-  outputDiv.id = "output";
   outputDiv.innerHTML = data;
-  parentDiv.append(outputDiv);
-
   ipcRenderer.send("update-output", data);
+
+  ipcRenderer.send("update-output-history", data);
 });

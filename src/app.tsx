@@ -1,26 +1,42 @@
 import React from "react";
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { RouterProvider } from "react-router-dom";
 import router from "./shared/router";
-import { useAppDispatch } from "./shared/hooks";
-import { IFolderStructure } from "./shared/types";
-import { set_folder_structure } from "./shared/rdx-slice";
+import { useAppDispatch, useAppSelector } from "./shared/hooks";
+import { IEditorSettings, IFolderStructure } from "./shared/types";
+import { set_folder_structure, update_settings } from "./shared/rdx-slice";
 import { ConfigProvider, theme } from "antd/es";
 import { PrimeReactProvider } from "primereact/api";
-import { AnantProvider } from "./anantui";
+import { AnantProvider } from "./meridiaui";
 
 const App = React.memo((props: any) => {
   const dispatch = useAppDispatch();
+  const settingsDe = useAppSelector((state) => state.main.editorSettings);
+
+  const checkFirstTime = React.useCallback(() => {
+    const isFirstTime =
+      localStorage.getItem("meridia_first_time_launch") === null;
+    if (isFirstTime) {
+      window.electron.set_settings(settingsDe);
+      localStorage.setItem("meridia_first_time_launch", "false");
+    }
+  }, []);
 
   const get_folder = React.useCallback(async () => {
     const folder = (await window.electron.get_folder()) as IFolderStructure;
     folder != undefined && dispatch(set_folder_structure(folder));
   }, []);
 
+  const get_settings = React.useCallback(async () => {
+    const settings = (await window.electron.get_settings()) as IEditorSettings;
+    console.log("settings", settings);
+    settings != undefined && dispatch(update_settings(settings));
+  }, []);
+
   React.useLayoutEffect(() => {
+    checkFirstTime();
+
     get_folder();
-    console.log("hello there can you see this?");
-    console.log("hello world I am sending a greeting");
-    console.log("you can see this right now?!");
+    get_settings();
   }, []);
 
   return (

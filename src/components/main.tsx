@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useEffect } from "react";
 import { MainContext } from "../shared/functions";
 import { get_file_types } from "../shared/functions";
 import { useAppDispatch, useAppSelector } from "../shared/hooks";
@@ -12,6 +12,7 @@ import pythonLangData from "../languages/python/python.json";
 import { App } from "./app";
 
 import * as monaco from "monaco-editor";
+import start, { E_EDITOR_THEME } from "monaco-python";
 
 const MainComponent = React.memo((props: any) => {
   const editor_ref = React.useRef<
@@ -23,92 +24,50 @@ const MainComponent = React.memo((props: any) => {
   const dispatch = useAppDispatch();
   const active_files = useAppSelector((state) => state.main.active_files);
 
-  const folder_structure = useAppSelector(
-    (state) => state.main.folder_structure
-  );
+  const settings = useAppSelector((state) => state.main.editorSettings);
 
-  console.log("folder strucute", folder_structure);
-
-  function flattenFolderStructure(folder: any) {
-    let suggestions: any = [];
-    if (folder && Array.isArray(folder.items)) {
-      folder.items.forEach((item: any) => {
-        suggestions.push({
-          label: item.name,
-
-          kind: item.is_Folder
-            ? monaco.languages.CompletionItemKind.Folder
-            : monaco.languages.CompletionItemKind.File,
-
-          insertText: item.is_Folder ? item.name + "/" : item.name,
-          detail: item.path,
-        });
-        // Recursively add child items if this item is a folder
-        if (item.is_Folder && item.items && item.items.length > 0) {
-          suggestions = suggestions.concat(flattenFolderStructure(item));
-        }
-      });
-    }
-    return suggestions;
-  }
+  useEffect(() => {
+    if (!editor_ref.current) return;
+    editor_ref.current.updateOptions(settings);
+  }, [settings]);
 
   const handle_set_editor = useCallback(
     async (selected_file: TSelectedFile) => {
       console.log("selected_file", selected_file);
 
-      if (editor_ref.current != undefined) {
+      const selectedExtension = selected_file.name.split(".").pop();
+
+      if (editor_ref.current) {
         const current_model = editor_ref.current.getModel();
-        const current_model_index = editor_files_ref.current.findIndex(
-          (editor) => editor.editor_id == current_model.uri.path
-        );
-
-        if (current_model_index > -1) {
-          editor_files_ref.current.splice(current_model_index, 1);
+        if (current_model) {
           const state = editor_ref.current.saveViewState();
+          const current_model_index = editor_files_ref.current.findIndex(
+            (editor) => editor.editor_id === current_model.uri.path
+          );
+
+          if (current_model_index > -1) {
+            editor_files_ref.current.splice(current_model_index, 1);
+          }
+
           editor_files_ref.current.push({
             editor_id: current_model.uri.path,
             editor_state: state,
           });
-        } else {
-          const state = editor_ref.current.saveViewState();
-          editor_files_ref.current.push({
-            editor_id: current_model.uri.path,
-            editor_state: state,
-          });
-        }
-
-        const target_model = monaco.editor
-          .getModels()
-          .filter((model) => model.uri.path == selected_file.path);
-
-        if (target_model.length > 0) {
-          const _model_index = editor_files_ref.current.findIndex(
-            (editor) => editor.editor_id == selected_file.path
-          );
-          editor_ref.current.setModel(target_model[0]);
-
-          console.log(
-            "target_model",
-            target_model,
-            _model_index,
-            editor_files_ref.current[_model_index],
-            editor_files_ref.current
-          );
-
-          return (
-            _model_index > -1 &&
-            editor_ref.current.restoreViewState(
-              editor_files_ref.current[_model_index].editor_state
-            )
-          );
         }
       }
 
-      const new_model = monaco.editor.createModel(
-        selected_file.content,
-        get_file_types(selected_file.name),
-        monaco.Uri.file(selected_file.path)
-      );
+      // Check if model already exists before creating a new one
+      let new_model = monaco.editor
+        .getModels()
+        .find((model) => model.uri.path === selected_file.path);
+
+      if (!new_model) {
+        new_model = monaco.editor.createModel(
+          selected_file.content || "",
+          get_file_types(selected_file.name) || "plaintext",
+          monaco.Uri.parse(`file://${selected_file.path}`)
+        );
+      }
 
       monaco.languages.typescript.typescriptDefaults.setCompilerOptions({
         jsx: 4,
@@ -128,34 +87,33 @@ const MainComponent = React.memo((props: any) => {
         base: "vs-dark",
       });
 
-      if (editor_ref.current == undefined) {
+      if (!editor_ref.current) {
         editor_ref.current = monaco.editor.create(
           document.querySelector(".editor-container"),
           {
-            theme: "oneDark",
-            cursorBlinking: "expand",
-            cursorSmoothCaretAnimation: "on",
-            minimap: { enabled: false },
-            quickSuggestions: { other: true, comments: true, strings: true },
-            wordBasedSuggestions: "allDocuments",
-            automaticLayout: true,
-            folding: true,
-            lineNumbers: "on",
-            largeFileOptimizations: true,
-            links: true,
-            acceptSuggestionOnEnter: "on",
-            autoClosingBrackets: "always",
-            formatOnPaste: true,
-            formatOnType: true,
-            mouseWheelZoom: true,
-            contextmenu: true,
-            bracketPairColorization: {
-              enabled: true,
-            },
-            screenReaderAnnounceInlineSuggestion: true,
-            parameterHints: {
-              enabled: true,
-            },
+            theme: settings.theme,
+            fontSize: settings.fontSize,
+            fontFamily: settings.fontFamily,
+            cursorBlinking: settings.cursorBlinking,
+            cursorSmoothCaretAnimation: settings.cursorSmoothCaretAnimation,
+            minimap: settings.minimap,
+            quickSuggestions: settings.quickSuggestions,
+            wordBasedSuggestions: settings.wordBasedSuggestions,
+            automaticLayout: settings.automaticLayout,
+            folding: settings.folding,
+            lineNumbers: settings.lineNumbers,
+            largeFileOptimizations: settings.largeFileOptimizations,
+            links: settings.links,
+            acceptSuggestionOnEnter: settings.acceptSuggestionOnEnter,
+            autoClosingBrackets: settings.autoClosingBrackets,
+            formatOnPaste: settings.formatOnPaste,
+            formatOnType: settings.formatOnType,
+            mouseWheelZoom: settings.mouseWheelZoom,
+            contextmenu: settings.contextmenu,
+            bracketPairColorization: settings.bracketPairColorization,
+            screenReaderAnnounceInlineSuggestion:
+              settings.screenReaderAnnounceInlineSuggestion,
+            parameterHints: settings.parameterHints,
           }
         );
       }
@@ -172,12 +130,13 @@ const MainComponent = React.memo((props: any) => {
         }
       );
 
-      editor_ref.current.onDidChangeModelContent((e) => {
+      editor_ref.current.onDidChangeModelContent(() => {
         const model_editing_index = store
           .getState()
           .main.active_files.findIndex(
-            (file) => file.path == editor_ref.current.getModel().uri.path
+            (file) => file.path === editor_ref.current.getModel().uri.path
           );
+
         const model_editing = {
           ...store.getState().main.active_files[model_editing_index],
         };
@@ -310,20 +269,6 @@ const MainComponent = React.memo((props: any) => {
     window.addEventListener("blur", handle_win_blur);
     return () => window.removeEventListener("blur", handle_win_blur);
   }, []);
-
-  //   React.useEffect(() => {
-  //     const handleKeyDown = (event: KeyboardEvent) => {
-  //       if (event.key === "Tab") {
-  //         event.preventDefault();
-  //       }
-  //     };
-
-  //     window.addEventListener("keydown", handleKeyDown);
-
-  //     return () => {
-  //       window.removeEventListener("keydown", handleKeyDown);
-  //     };
-  //   }, []);
 
   return (
     <MainContext.Provider

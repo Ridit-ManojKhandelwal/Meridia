@@ -1,50 +1,54 @@
 import { useEffect, useRef } from "react";
-
 import { Terminal as XTerminal } from "xterm";
 import { FitAddon } from "xterm-addon-fit";
-
 import "@xterm/xterm/css/xterm.css";
 
-export const Terminal = () => {
-  const terminalRef = useRef<HTMLDivElement | null>(null);
-  const terminalInstance = useRef<XTerminal | null>(null);
-  const fitAddon = useRef<FitAddon | null>(null);
+export const Terminal = ({ history, updateHistory }: any) => {
+  const terminalRef = useRef(null);
+  const terminalInstance = useRef(null);
+  const fitAddon = useRef(null);
 
   useEffect(() => {
     if (!terminalRef.current || terminalInstance.current) return;
 
     const term = new XTerminal({
       cursorBlink: true,
-      fontFamily: "Ubuntu Mono, monospace",
-      fontSize: 16,
-      letterSpacing: 1.1,
+      fontFamily: "Cascadia Code, monospace",
+      fontSize: 14,
+      letterSpacing: 0,
       lineHeight: 1.4,
       theme: {
         background: "#21252bff",
-        foreground: "#cdd6f4",
-        cursor: "#f38ba8",
-        black: "#45475a",
-        red: "#f38ba8",
-        green: "#a6e3a1",
-        yellow: "#f9e2af",
-        blue: "#89b4fa",
-        magenta: "#cba6f7",
-        cyan: "#94e2d5",
-        white: "#bac2de",
+        foreground: "#d4d4d4",
+        cursor: "#ffffff",
+        black: "#000000",
+        red: "#cd3131",
+        green: "#0dbc79",
+        yellow: "#e5e510",
+        blue: "#2472c8",
+        magenta: "#bc3fbc",
+        cyan: "#11a8cd",
+        white: "#e5e5e5",
+        brightBlack: "#666666",
+        brightRed: "#f14c4c",
+        brightGreen: "#23d18b",
+        brightYellow: "#f5f543",
+        brightBlue: "#3b8eea",
+        brightMagenta: "#d670d6",
+        brightCyan: "#29b8db",
+        brightWhite: "#e5e5e5",
       },
     });
-
     const fit = new FitAddon();
     fitAddon.current = fit;
     term.loadAddon(fit);
-
     term.open(terminalRef.current);
-
     fit.fit();
-
     terminalInstance.current = term;
 
-    window.electron.ipcRenderer.send("terminal.keystroke", "\n");
+    history.forEach((line: any) => term.write(line));
+
+    window.electron.ipcRenderer.send("terminal.keystroke", { key: "\r" });
 
     const sendResizeRequest = () => {
       if (terminalInstance.current) {
@@ -64,11 +68,17 @@ export const Terminal = () => {
 
     window.addEventListener("resize", handleResize);
 
-    const handleIncomingData = (_event: any, data: string) => {
-      term.write(data);
-    };
+    term.onResize(({ cols, rows }) => {
+      window.electron.ipcRenderer.send("terminal.resize", { cols, rows });
+    });
 
-    window.electron.ipcRenderer.on("terminal.incomingData", handleIncomingData);
+    window.electron.ipcRenderer.on(
+      "terminal.incomingData",
+      (_event: any, data: any) => {
+        term.write(data);
+        updateHistory("terminal", data);
+      }
+    );
 
     term.onData((data) => {
       window.electron.ipcRenderer.send("terminal.keystroke", data);
@@ -77,21 +87,15 @@ export const Terminal = () => {
     return () => {
       term.dispose();
       window.removeEventListener("resize", handleResize);
-      window.electron.ipcRenderer.removeListener(
-        "terminal.incomingData",
-        handleIncomingData
-      );
-      terminalInstance.current = null;
+      window.electron.ipcRenderer.removeAllListeners("terminal.incomingData");
     };
   }, []);
 
   return (
-    <div style={{ height: "100%", width: "100%" }}>
-      <div
-        ref={terminalRef}
-        className="terminal"
-        style={{ height: "100%", width: "100%" }}
-      />
-    </div>
+    <div
+      ref={terminalRef}
+      className="terminal"
+      style={{ height: "100%", width: "100%" }}
+    />
   );
 };

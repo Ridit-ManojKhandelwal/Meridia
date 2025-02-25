@@ -1,12 +1,19 @@
 import { useEffect, useState, useRef } from "react";
 
-import { BarsOutlined, CaretRightOutlined } from "@ant-design/icons/lib";
+import {
+  ArrowDownOutlined,
+  BarsOutlined,
+  CaretRightOutlined,
+  DownOutlined,
+} from "@ant-design/icons/lib";
 
 import { useAppDispatch } from "../../../shared/hooks";
 import { useAppSelector } from "../../../shared/hooks";
 
 import { update_terminal_active } from "../../../shared/rdx-slice";
 import { update_current_bottom_tab } from "../../../shared/rdx-slice";
+
+import Logo from "../../../assets/logo.png";
 
 import "./header.css";
 
@@ -16,6 +23,10 @@ export default function Header() {
   const [activeSubmenu, setActiveSubmenu] = useState<number | null>(null);
   const menuRef = useRef(null);
   const runRef = useRef<HTMLButtonElement>(null);
+
+  const folder_strucutre = useAppSelector(
+    (state) => state.main.folder_structure
+  );
 
   const dispatch = useAppDispatch();
   const { active_file } = useAppSelector((state) => ({
@@ -75,6 +86,9 @@ export default function Header() {
   return (
     <div className="header-wrapper">
       <div className="props">
+        <div className="logo">
+          <img src={Logo} alt="Logo" />
+        </div>
         <button onClick={() => setMenuVisible((prev) => !prev)}>
           <BarsOutlined />
         </button>
@@ -123,7 +137,8 @@ export default function Header() {
           </div>
         ) : (
           <div className="project-info">
-            <p>Anantam</p>
+            {folder_strucutre?.name?.split(/[/\\]/).at(-1) ||
+              "No Project Selected"}
           </div>
         )}
       </div>

@@ -14,10 +14,11 @@ import { useAppDispatch, useAppSelector } from "../../../shared/hooks";
 import { MainContext } from "../../../shared/functions";
 
 import {
+  set_folder_structure,
   update_active_file,
   update_active_files,
 } from "../../../shared/rdx-slice";
-import { TActiveFile } from "../../../shared/types";
+import { IFolderStructure, TActiveFile } from "../../../shared/types";
 
 import { store } from "../../../shared/store";
 
@@ -57,12 +58,13 @@ const Folder = React.memo(({ handleInsertNode = () => {}, explorer }: any) => {
       console.log("branch", branch_name, full_path);
       const get_file_content =
         await window.electron.get_file_content(full_path);
+
+      console.log("file content", get_file_content);
       const active_file: TActiveFile = {
         icon: "",
         path: full_path,
         name: branch_name,
         is_touched: false,
-        content: "",
       };
 
       const selected_file = {
@@ -129,6 +131,7 @@ const Folder = React.memo(({ handleInsertNode = () => {}, explorer }: any) => {
         }
 
         handleInsertNode(explorer.id, newName, showInput.isFolder);
+        // handleInsertNode(0, "main222.pu", true);
       } catch (error) {
         console.error("Error creating file/folder:", error);
         alert(
@@ -142,85 +145,89 @@ const Folder = React.memo(({ handleInsertNode = () => {}, explorer }: any) => {
     }
   };
 
-  if (explorer.isFolder) {
-    return (
-      <div style={{ marginTop: 5 }}>
-        <div
-          className="folder"
-          onClick={() => setExpand(!expand)}
+  const handle_open_folder = React.useCallback(async () => {
+    const folder = (await window.electron.openFolder()) as IFolderStructure;
+    folder != undefined && dispatch(set_folder_structure(folder));
+  }, []);
+
+  if (explorer === undefined)
+    return <button onClick={handle_open_folder}>Open Directory</button>;
+  else {
+    if (explorer.isFolder) {
+      return (
+        <div style={{ marginTop: 5 }}>
+          <div
+            className="folder"
+            onClick={() => setExpand(!expand)}
+            onAuxClick={() =>
+              window.electron.show_contextmenu({
+                path: explorer.name,
+                type: "folder",
+                rootPath: explorer.root,
+              })
+            }
+          >
+            <span>
+              <FolderIcon name={explorer.name} expanded={expand} />
+              {explorer.name.split(/\/|\\/).at(-1)}
+            </span>
+            <div>
+              <button onClick={(e) => handleNewFolder(e, true)}>
+                <FolderAddOutlined />
+              </button>
+              <button onClick={(e) => handleNewFolder(e, false)}>
+                <FileAddFilled />
+              </button>
+            </div>
+          </div>
+          <div style={{ display: expand ? "block" : "none", paddingLeft: 25 }}>
+            {showInput.visible && (
+              <div className="inputContainer">
+                <span>
+                  {showInput.isFolder ? <FolderOutlined /> : <FileOutlined />}
+                </span>
+                <input
+                  type="text"
+                  onKeyDown={onAddFolder}
+                  onBlur={() => setShowInput({ ...showInput, visible: false })}
+                  className="inputContainer__input"
+                  autoFocus
+                />
+              </div>
+            )}
+            {sortedItems.map((exp: any) => (
+              <div key={exp.id} className="folder-container">
+                <Folder handleInsertNode={handleInsertNode} explorer={exp} />
+              </div>
+            ))}
+          </div>
+        </div>
+      );
+    } else {
+      return (
+        <span
+          className={`file`}
+          onClick={() => {
+            handle_set_editor(
+              explorer.name,
+              path_join([explorer.path, explorer.name])
+            );
+          }}
           onAuxClick={() =>
             window.electron.show_contextmenu({
               path: explorer.name,
-              type: "folder",
+              type: "file",
               rootPath: explorer.root,
             })
           }
         >
-          <span>
-            <FolderIcon name={explorer.name} expanded={expand} />
-            {explorer.name.split(/\/|\\/).at(-1)}
-          </span>
-          <div>
-            <button onClick={(e) => handleNewFolder(e, true)}>
-              <FolderAddOutlined />
-            </button>
-            <button onClick={(e) => handleNewFolder(e, false)}>
-              <FileAddFilled />
-            </button>
-          </div>
-        </div>
-        <div style={{ display: expand ? "block" : "none", paddingLeft: 25 }}>
-          {showInput.visible && (
-            <div className="inputContainer">
-              <span>
-                {showInput.isFolder ? <FolderOutlined /> : <FileOutlined />}
-              </span>
-              <input
-                type="text"
-                onKeyDown={onAddFolder}
-                onBlur={() => setShowInput({ ...showInput, visible: false })}
-                className="inputContainer__input"
-                autoFocus
-              />
-            </div>
-          )}
-          {sortedItems.map((exp: any) => (
-            <div key={exp.id} className="folder-container">
-              <Folder handleInsertNode={handleInsertNode} explorer={exp} />
-            </div>
-          ))}
-        </div>
-      </div>
-    );
-  } else {
-    return (
-      <span
-        className={`file`}
-        onClick={() => {
-          handle_set_editor(
-            explorer.name,
-            path_join([explorer.path, explorer.name])
-          );
-          if (selectedItem === explorer.name) {
-            setSelectedItem(null);
-          } else {
-            setSelectedItem(explorer.name);
-          }
-        }}
-        onAuxClick={() =>
-          window.electron.show_contextmenu({
-            path: explorer.name,
-            type: "file",
-            rootPath: explorer.root,
-          })
-        }
-      >
-        {FileIcon({
-          type: `${explorer.name}`.split(".").at(-1),
-        })}
-        {explorer.name}
-      </span>
-    );
+          {FileIcon({
+            type: `${explorer.name}`.split(".").at(-1),
+          })}
+          {explorer.name}
+        </span>
+      );
+    }
   }
 });
 

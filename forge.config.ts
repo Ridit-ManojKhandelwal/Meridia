@@ -14,35 +14,15 @@ import { rendererConfig } from "./webpack.renderer.config";
 const config: ForgeConfig = {
   packagerConfig: {
     asar: true,
-    name: "Anantam",
-    executableName: "Anantam",
+    name: "Meridia",
+    executableName: "Meridia",
   },
   rebuildConfig: {},
-  makers: [
-    new MakerZIP({}, ["linux", "win32"]),
-    // new MakerRpm({}),
-    // new MakerDeb({ options: { name: "anantam" } }),
-    // new MakerSquirrel({
-    //   noMsi: false,
-    //   name: "Anantam",
-    //   exe: "Anantam",
-    //   title: "Anantam",
-    //   setupExe: "AnantamSetup.exe",
-    //   setupMsi: "AnantamSetup.msi",
-    //   owners: "MNovus",
-    //   description: "Powerfull IDE For Python",
-    //   windowsSign: {
-    //     description: "Powerfull IDE For Python",
-    //     certificateFile: "./certs/anantam.pfx",
-    //     certificatePassword: process.env.CERTIFICATE_PASSWORD,
-    //   },
-    //   version: "1.0.0",
-    // }),
-  ],
+  makers: [new MakerZIP({}, ["linux", "win32"])],
   plugins: [
     new AutoUnpackNativesPlugin({}),
     new WebpackPlugin({
-      devContentSecurityPolicy: `default-src * self blob: data: gap:; style-src * self 'unsafe-inline' blob: data: gap:; script-src * 'self' 'unsafe-eval' 'unsafe-inline' blob: data: gap:; object-src * 'self' blob: data: gap:; img-src * self 'unsafe-inline' blob: data: gap:; connect-src self * 'unsafe-inline' blob: data: gap:; frame-src * self blob: data: gap:;`,
+      devContentSecurityPolicy: `default-src * self blob: data: gap:; style-src * self 'unsafe-inline' blob: data: gap:; script-src * 'self' 'unsafe-eval' 'unsafe-inline' blob: data: gap:; object-src * 'self' blob: data: gap:; img-src * self 'unsafe-inline' blob: data: gap: asset:; connect-src self * 'unsafe-inline' blob: data: gap:; frame-src * self blob: data: gap:;`,
       mainConfig,
       renderer: {
         config: rendererConfig,

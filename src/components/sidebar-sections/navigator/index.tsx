@@ -3,8 +3,6 @@ import React, { useEffect } from "react";
 import { useAppDispatch, useAppSelector } from "../../../shared/hooks";
 import { MainContext } from "../../../shared/functions";
 
-import PerfectScrollbar from "react-perfect-scrollbar";
-
 import {
   set_folder_structure,
   update_active_file,
@@ -51,7 +49,6 @@ const Navigator = React.memo((props: any) => {
         path: full_path,
         name: branch_name,
         is_touched: false,
-        content: get_file_content,
       };
 
       const selected_file = {
@@ -86,7 +83,8 @@ const Navigator = React.memo((props: any) => {
   useEffect(() => {
     window.electron.ipcRenderer.on("new-file-tab", () => {
       console.log("new file");
-      handle_set_editor("Untitled", "");
+      const randomFilePath = `/untitled-${Date.now()}.py`;
+      handle_set_editor("Untitled.py", randomFilePath);
     });
 
     window.electron.ipcRenderer.on(
@@ -102,17 +100,12 @@ const Navigator = React.memo((props: any) => {
     <div className="folder-tree">
       <div className="explorer-content-wrapper">
         <div className="content-list-outer-container">
-          <div>
-            <span>Navigator</span>
-          </div>
-          <PerfectScrollbar className="scroller">
-            {/* <div ref={content_main_div_ref} className="content-list main"></div> */}
-            <Folder
-              handleInsertNode={handleInsertNode}
-              handleRemoveNode={handleRemoveNode}
-              explorer={folder_structure}
-            />
-          </PerfectScrollbar>
+          <div>{/* <span>Navigator</span> */}</div>
+          <Folder
+            handleInsertNode={handleInsertNode}
+            handleRemoveNode={handleRemoveNode}
+            explorer={folder_structure || undefined}
+          />
         </div>
       </div>
     </div>

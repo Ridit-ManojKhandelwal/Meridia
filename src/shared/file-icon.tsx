@@ -16,6 +16,7 @@ import { ReactComponent as PythonFileIcon } from "../assets/svg/py.svg";
 import { ReactComponent as UnknownFileIcon } from "../assets/svg/unknown.svg";
 import { ReactComponent as ExcelFileIcon } from "../assets/svg/excel.svg";
 import { ReactComponent as CSVFileIcon } from "../assets/svg/csv.svg";
+import { ReactComponent as SettingsIcon } from "../assets/svg/settings.svg";
 
 const FileIcon = ({ type }: { type: string }) => {
   const typeIcon = {
@@ -34,6 +35,7 @@ const FileIcon = ({ type }: { type: string }) => {
     unknown: UnknownFileIcon,
     excel: ExcelFileIcon,
     csv: CSVFileIcon,
+    settings: SettingsIcon,
   };
 
   const IconComponent =

@@ -1,5 +1,7 @@
 import { ipcRenderer } from "electron";
 
+import { IEditorSettings } from "../shared/types";
+
 export const renderer = {
   openFolder: async () => {
     const folder = await ipcRenderer.invoke("open-folder");
@@ -20,9 +22,24 @@ export const renderer = {
     ipcRenderer.send("clear-folder");
   },
 
+  get_settings: async () => {
+    const settings = await ipcRenderer.invoke("get-settings");
+    return settings;
+  },
+
+  clear_settings: () => {
+    ipcRenderer.send("clear-settings");
+  },
+
+  set_settings: (settings: IEditorSettings) => {
+    ipcRenderer.send("set-settings", settings);
+  },
+
   get_file_content: async (path: string) => {
     try {
+      console.log("path", path);
       const file_content = await ipcRenderer.invoke("get-file-content", path);
+      console.log("content", file_content);
       return file_content;
     } catch {
       return "error fetching file content";
@@ -78,6 +95,9 @@ export const renderer = {
     },
     on: (channel: any, func: any) => {
       ipcRenderer.on(channel, (event, ...args) => func(event, ...args));
+    },
+    once: (channel: any, func: any) => {
+      ipcRenderer.once(channel, (event, ...args) => func(event, ...args));
     },
     removeAllListeners: (channel: any) => {
       ipcRenderer.removeAllListeners(channel);

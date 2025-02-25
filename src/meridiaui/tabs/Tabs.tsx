@@ -19,6 +19,7 @@ interface TabProps {
   customButtons?: React.ReactNode[];
   customButtonsTooltip?: string[];
   defaultTabActive?: number;
+  activeManualTab?: number;
 }
 
 export const Tabs = ({
@@ -28,6 +29,7 @@ export const Tabs = ({
   customButtons = [],
   customButtonsTooltip = [],
   defaultTabActive = 0,
+  activeManualTab,
 }: TabProps) => {
   const [tabs, setTabs] = useState(items);
   const [activeTab, setActiveTab] = useState(tabs.length > 1 ? 1 : 0);
@@ -66,7 +68,7 @@ export const Tabs = ({
             <Tooltip text={item.name}>
               <div
                 key={item.key}
-                className={`anant-tab ${activeTab === item.key && "anant-tab-active"}`}
+                className={`anant-tab ${activeTab === item.key && "anant-tab-active"} ${activeManualTab === item.key && "anant-tab-active"}`}
                 onClick={() => {
                   setActiveTab(item.key);
                   item.onTabClick();

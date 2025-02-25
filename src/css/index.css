@@ -8,17 +8,22 @@
 @tailwind utilities;
 
 @font-face {
-  font-family: "JetBrains Mono";
+  font-family: "JetBrains Mono", monospace;
   src: url("/src/assets/fonts/JetBrainsMono-Regular.ttf") format("ttf");
   font-weight: 100 800;
   font-style: normal;
 }
 
 @font-face {
-  font-family: "Ubuntu Mono", monosp--thumb-colorace;
+  font-family: "Ubuntu Mono", monospace;
   src: url("/src/assets/fonts/UbuntuMono-Regular.ttf") format("ttf");
   font-weight: 100 800;
   font-style: normal;
+}
+
+@font-face {
+  font-family: "Consolas";
+  src: url("/src/assets/fonts/consolas.ttf") format("truetype");
 }
 
 .footer-section * {
@@ -26,9 +31,9 @@
 }
 
 :root {
-  --main-bg: #121212;
+  --main-bg: #282c34;
   --main-text-color: #dcdcdc;
-  --sidebar-bg: #121212;
+  --sidebar-bg: #282c34;
   --sidebar-text-color: #dcdcdc;
   --sidebar-icon-color: #868686;
   --sidebar-icon-active-color: #d7d7d7;
@@ -116,6 +121,7 @@ body {
   grid-template-rows: 35px 1fr 22px;
   height: 90vh;
   overflow: hidden;
+  background: var(--main-bg);
 }
 
 .wrapper-component > .footer-section {
@@ -446,6 +452,7 @@ body {
   max-height: calc(100vh - 50px);
   height: 40px;
   justify-content: space-between;
+  border-bottom: 1px solid #4a4a4a;
 }
 
 .content-inner .page-tabs-cont .tabs {
@@ -1267,7 +1274,7 @@ code.output {
   background-size: 20px 20px;
 }
 
-#output {
+/* #output {
   padding: 20px;
   color: var(--main-text-color);
   background: var(--file-list-bg);
@@ -1277,7 +1284,7 @@ code.output {
   font-size: 14px;
   white-space: pre-wrap;
   word-wrap: break-word;
-}
+} */
 
 table.dataframe {
   border-collapse: collapse;
@@ -1302,53 +1309,6 @@ table.dataframe td {
 
 table.dataframe tr:nth-child(even) {
   background-color: var(--file-list-bg);
-}
-
-.cm-cursor {
-  border-left: 2px solid black;
-  transition:
-    left 0.1s ease-out,
-    top 0.1s ease-out,
-    transform 0.1s ease-out;
-}
-
-@keyframes caretAnim {
-  0%,
-  100% {
-    scale: 1;
-    opacity: 1;
-  }
-  50% {
-    scale: 0.8;
-    opacity: 0;
-  }
-}
-
-/* For WebKit-based browsers (Chrome, Edge, Safari) */
-.cm-editor::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
-}
-
-.cm-editor::-webkit-scrollbar-thumb {
-  background: rgba(100, 100, 100, 0.5);
-  border-radius: 4px;
-  transition: background 0.2s;
-}
-
-.cm-editor::-webkit-scrollbar-thumb:hover {
-  background: rgba(150, 150, 150, 0.8);
-}
-
-.cm-editor::-webkit-scrollbar-track {
-  background: rgba(30, 30, 30, 0.2);
-  border-radius: 4px;
-}
-
-/* Firefox */
-.cm-editor {
-  scrollbar-width: thin;
-  scrollbar-color: rgba(100, 100, 100, 0.5) rgba(30, 30, 30, 0.2);
 }
 
 .editor-container {
