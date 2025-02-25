@@ -46,9 +46,6 @@ const ContentSection = React.memo((props: any) => {
         return;
       }
 
-      if (file.is_touched === false) {
-      }
-
       const _clone = [...active_files];
       const index_to_remove = _clone.findIndex((_t) => _t.path == file.path);
       const targetFile = _clone[index_to_remove];
