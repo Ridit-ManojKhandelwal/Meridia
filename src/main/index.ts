@@ -205,6 +205,13 @@ export const MenuTemplate = [
         },
       },
       {
+        label: "Meridia Studio",
+        accelerator: "Ctrl + Shift + B",
+        click: () => {
+          mainWindow.webContents.send("open-meridia-studio");
+        },
+      },
+      {
         label: "Appearance",
         submenu: [
           { label: "Full Screen" },

@@ -18,7 +18,7 @@ export const Terminal = ({ history, updateHistory }: any) => {
       letterSpacing: 0,
       lineHeight: 1.4,
       theme: {
-        background: "#21252bff",
+        background: "#1e1e1e",
         foreground: "#d4d4d4",
         cursor: "#ffffff",
         black: "#000000",

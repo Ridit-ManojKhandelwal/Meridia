@@ -21,7 +21,7 @@ export const ChooseStepSection = ({ setStep }: chooseStepSectionProps) => {
           textAlign: "center",
         }}
       >
-        <h1>Welcome to Data Studio</h1>
+        <h1>Welcome to Meridia Studio</h1>
         <h2>Choose a option to continue.</h2>
       </div>
       <div

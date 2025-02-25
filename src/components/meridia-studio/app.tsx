@@ -12,7 +12,7 @@ import { VarInfo } from "./components/sections/data-var-info-section";
 import "./styling/style.css";
 
 const DataStudio = () => {
-  const [step, setStep] = useState<number>(0);
+  const [step, setStep] = useState<number>(2);
   const [fileData, setFileData] = useState<any[]>([]);
   const [sheetName, setSheetName] = useState<string>("");
   const [skipRows, setSkipRows] = useState<number>(0);

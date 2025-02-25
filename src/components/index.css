@@ -9,6 +9,12 @@
   padding: 10px 0;
 }
 
+.sidebar .bottom {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+}
+
 .header-wrapper .props .logo {
   width: 59px;
   height: 40px;
@@ -35,7 +41,7 @@
 
 .sidebar-item:hover,
 .sidebar-item.active {
-  background: #333333;
+  background: #2a292a;
   color: #ffffff;
   border-radius: 8px;
 }

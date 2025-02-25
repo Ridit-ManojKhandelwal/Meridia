@@ -1,17 +1,3 @@
-:root {
-  --main-bg: #21252bff;
-  --main-text-color: #abb2bfff;
-  --sidebar-bg: #21252bff;
-  --sidebar-text-color: #abb2bfff;
-  --sidebar-icon-color: #868686;
-  --sidebar-icon-active-color: #d7d7d7;
-  --thumb-color: #ffffff68;
-  --blue: #0078d4;
-  --border-color: #181a1fff;
-  --file-list-bg: #37373c;
-  --tabs-bg: #323842ff;
-}
-
 * {
   color: var(--main-text-color);
 }

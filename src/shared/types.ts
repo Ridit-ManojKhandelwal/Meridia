@@ -77,7 +77,7 @@ export type TDataStudioActive = {
 // Active File Type
 export type TActiveFile = {
   path: string;
-  name: string;
+  name: any;
   icon: string;
   is_touched: boolean;
 };

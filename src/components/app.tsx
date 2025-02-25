@@ -8,6 +8,8 @@ import { BottomTabs } from "./bottom-section";
 import Header from "./sections/header/";
 import AnantChat from "../meridiachat";
 
+import { ReactComponent as StudioIcon } from "../assets/svg/remote.svg";
+
 import PerfectScrollbar from "react-perfect-scrollbar";
 
 import { useAppDispatch, useAppSelector } from "../shared/hooks";
@@ -18,11 +20,15 @@ import {
 } from "../shared/rdx-slice";
 import { store } from "../shared/store";
 
-import { FolderOutlined, SettingOutlined } from "@ant-design/icons";
+import {
+  BarChartOutlined,
+  FolderOutlined,
+  SettingOutlined,
+} from "@ant-design/icons";
 
 import Navigator from "./sidebar-sections/navigator";
 
-import { ReactComponent as ExtensionIcon } from "../assets/svg/extensions.svg";
+import Tooltip from "../meridiaui/tooltip/Tooltip";
 
 import "./index.css";
 
@@ -41,13 +47,9 @@ export const App = () => {
       icon: <FolderOutlined />,
       content: <Navigator />,
     },
+
     {
       key: 1,
-      icon: <ExtensionIcon />,
-      // content: <PluginManager />,
-    },
-    {
-      key: 2,
       icon: <SettingOutlined />,
     },
   ];
@@ -56,7 +58,7 @@ export const App = () => {
     console.log("opening settings");
 
     const settingsFile = {
-      path: "",
+      path: "/settings",
       name: "Settings",
       icon: "settings",
       is_touched: false,
@@ -70,10 +72,38 @@ export const App = () => {
 
     if (settingsIndex === -1) {
       current_active_files.push(settingsFile);
+    } else {
+      dispatch(update_active_file(settingsFile));
+      return;
     }
 
     dispatch(update_active_files(current_active_files));
     dispatch(update_active_file(settingsFile));
+  };
+
+  const openMeridiaStudio = () => {
+    const meridiaStudioFile = {
+      path: "/studio",
+      name: "Studio",
+      icon: "Studio",
+      is_touched: false,
+    };
+
+    const current_active_files = [...store.getState().main.active_files];
+
+    const studioIndex = current_active_files.findIndex(
+      (file) => file.name === "Studio"
+    );
+
+    if (studioIndex === -1) {
+      current_active_files.push(meridiaStudioFile);
+    } else {
+      dispatch(update_active_file(meridiaStudioFile));
+      return;
+    }
+
+    dispatch(update_active_files(current_active_files));
+    dispatch(update_active_file(meridiaStudioFile));
   };
 
   useEffect(() => {
@@ -82,6 +112,21 @@ export const App = () => {
     });
     return () =>
       window.electron.ipcRenderer.removeListener("open-settings", openSettings);
+  }, []);
+
+  useEffect(() => {
+    window.electron.ipcRenderer.on("open-meridia-studio", () => {
+      openMeridiaStudio();
+    });
+    return () =>
+      window.electron.ipcRenderer.removeListener(
+        "open-meridia-studio",
+        openMeridiaStudio
+      );
+  }, []);
+
+  useEffect(() => {
+    openMeridiaStudio();
   }, []);
 
   return (
@@ -97,40 +142,50 @@ export const App = () => {
     >
       <Header />
       <div className="middle-section" style={{ flex: 1, display: "flex" }}>
-        <div className="sidebar">
+        <div
+          className="sidebar"
+          style={{
+            background: "#363636",
+          }}
+        >
           <div className="top">
-            <div
-              key={0}
-              className={`sidebar-item ${activeItem === 0 ? "active" : ""}`}
-              onClick={() => {
-                setActiveItem(activeItem === 0 ? -1 : 0);
-                dispatch(update_sidebar_active(activeItem !== 0));
-              }}
-            >
-              <FolderOutlined />
-            </div>
-            <div
-              key={0}
-              className={`sidebar-item ${activeItem === 1 ? "active" : ""}`}
-              onClick={() => {
-                setActiveItem(activeItem === 1 ? -1 : 1);
-                dispatch(update_sidebar_active(activeItem !== 1));
-              }}
-            >
-              <ExtensionIcon />
-            </div>
+            <Tooltip text="Navigator">
+              <div
+                key={0}
+                className={`sidebar-item ${activeItem === 0 ? "active" : ""}`}
+                onClick={() => {
+                  setActiveItem(activeItem === 0 ? -1 : 0);
+                  dispatch(update_sidebar_active(activeItem !== 0));
+                }}
+              >
+                <FolderOutlined />
+              </div>
+            </Tooltip>
           </div>
 
-          <div
-            key={1}
-            className={`sidebar-item ${activeItem === 2 ? "active" : ""}`}
-            onClick={() => {
-              // setActiveItem(activeItem === 1 ? -1 : 1);
-              // dispatch(update_sidebar_active(activeItem !== 1));
-              openSettings();
-            }}
-          >
-            <SettingOutlined />
+          <div className="bottom">
+            <Tooltip text="MStudio (Ctrl+Shift+B)">
+              <div
+                key={2}
+                className={`sidebar-item ${activeItem === 2 ? "active" : ""}`}
+                onClick={() => {
+                  openMeridiaStudio();
+                }}
+              >
+                <StudioIcon />
+              </div>
+            </Tooltip>
+            <Tooltip text="Settings (Ctrl+,)">
+              <div
+                key={1}
+                className={`sidebar-item ${activeItem === 1 ? "active" : ""}`}
+                onClick={() => {
+                  openSettings();
+                }}
+              >
+                <SettingOutlined />
+              </div>
+            </Tooltip>
           </div>
         </div>
 
@@ -151,7 +206,9 @@ export const App = () => {
                     collapsible
                     max="90%"
                     style={{
-                      borderRight: sidebarActive ? "1px solid #4a4a4a" : "none",
+                      borderRight: sidebarActive
+                        ? "1px solid var(--main-border-color)"
+                        : "none",
                       height: "100%",
                     }}
                   >
@@ -174,7 +231,7 @@ export const App = () => {
                   max="90%"
                   className="terminal"
                   style={{
-                    borderTop: "1px solid #4a4a4a",
+                    borderTop: "1px solid var(--main-border-color)",
                   }}
                 >
                   <BottomTabs />

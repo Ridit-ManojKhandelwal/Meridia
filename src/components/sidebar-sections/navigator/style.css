@@ -6,6 +6,10 @@
   --blue: #4a7ebb;
 }
 
+.folder-container {
+  background: transparent;
+}
+
 .folder-children {
   margin-left: 12px;
 }

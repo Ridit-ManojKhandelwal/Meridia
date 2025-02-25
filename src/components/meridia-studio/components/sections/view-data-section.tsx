@@ -88,6 +88,7 @@ export const ViewDataSection = ({ setStep, setData }: ViewDataSectionProps) => {
       style={{
         display: "flex",
         flexDirection: "column",
+        alignItems: "center",
         gap: "16px",
         overflow: "hidden",
         width: "90vw",

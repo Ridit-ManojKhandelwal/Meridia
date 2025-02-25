@@ -4,11 +4,14 @@ import {
   ArrowDownOutlined,
   BarsOutlined,
   CaretRightOutlined,
+  CodeOutlined,
   DownOutlined,
 } from "@ant-design/icons/lib";
 
 import { useAppDispatch } from "../../../shared/hooks";
 import { useAppSelector } from "../../../shared/hooks";
+
+import Tooltip from "../../../meridiaui/tooltip/Tooltip";
 
 import { update_terminal_active } from "../../../shared/rdx-slice";
 import { update_current_bottom_tab } from "../../../shared/rdx-slice";

@@ -155,7 +155,7 @@ const Folder = React.memo(({ handleInsertNode = () => {}, explorer }: any) => {
   else {
     if (explorer.isFolder) {
       return (
-        <div style={{ marginTop: 5 }}>
+        <div style={{ marginTop: 5 }} className="folder-container">
           <div
             className="folder"
             onClick={() => setExpand(!expand)}
@@ -196,7 +196,7 @@ const Folder = React.memo(({ handleInsertNode = () => {}, explorer }: any) => {
               </div>
             )}
             {sortedItems.map((exp: any) => (
-              <div key={exp.id} className="folder-container">
+              <div key={exp.id}>
                 <Folder handleInsertNode={handleInsertNode} explorer={exp} />
               </div>
             ))}

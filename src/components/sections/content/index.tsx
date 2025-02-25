@@ -8,6 +8,7 @@ import {
 import FileIcon from "../../../shared/file-icon";
 
 import SettingsComponent from "../../settings-section";
+import DataStudio from "../../meridia-studio/app";
 
 import { TActiveFile } from "../../../shared/types";
 
@@ -41,8 +42,8 @@ const ContentSection = React.memo((props: any) => {
     (e: MouseEvent, file: TActiveFile) => {
       e.stopPropagation();
 
-      if (file.name === "Settings") {
-        handleRemoveSettingsTab();
+      if (file.name === "Settings" || file.name === "Studio") {
+        handleRemoveTab();
         return;
       }
 
@@ -60,48 +61,46 @@ const ContentSection = React.memo((props: any) => {
     [active_files, active_file]
   );
 
-  const handleRemoveSettingsTab = React.useCallback(() => {
+  const handleRemoveTab = React.useCallback(() => {
     const _clone = [...active_files];
     const index_to_remove = _clone.findIndex(
-      (file) => file.name === "Settings"
+      (file) => file.name === "Settings" || file.name === "Studio"
     );
 
     if (index_to_remove === -1) return;
 
     _clone.splice(index_to_remove, 1);
 
-    const next_index =
-      index_to_remove === 0 ? index_to_remove : index_to_remove - 1;
+    let next_index = index_to_remove === 0 ? 0 : index_to_remove - 1;
 
-    if (active_file.name === "Settings") {
+    // Ensure the next index is within bounds
+    if (next_index < 0 || next_index >= _clone.length) {
+      next_index = _clone.length - 1;
+    }
+
+    if (active_file.name === "Settings" || active_file.name === "Studio") {
       dispatch(update_active_file(_clone[next_index] || null));
     }
 
     dispatch(update_active_files(_clone));
   }, [active_files, active_file]);
 
-  const handle_set_settings = React.useCallback(() => {
-    if (active_file.name !== "Settings") {
-      dispatch(
-        update_active_file({
-          name: "Settings",
-          path: "",
-          icon: "settings",
-          is_touched: false,
-        })
-      );
-    }
-  }, [active_file]);
+  const handle_set_tab = React.useCallback(
+    (file: TActiveFile) => {
+      dispatch(update_active_file(file));
+    },
+    [active_file, dispatch]
+  );
 
   useEffect(() => {
-    if (active_file?.name === "Settings") {
+    if (active_file?.name === "Settings" || active_file?.name === "Studio") {
       document.querySelector("#editor")?.setAttribute("style", "display: none");
     } else {
       document
         .querySelector("#editor")
         ?.setAttribute("style", "display: block");
     }
-  }, [active_file, handle_set_settings]);
+  }, [active_file, handle_set_tab]);
 
   const handleMiddleClick = (e: any, file: any) => {
     if (e.button === 1) {
@@ -125,8 +124,8 @@ const ContentSection = React.memo((props: any) => {
                 <div
                   key={file.path}
                   onClick={() =>
-                    file.name === "Settings"
-                      ? handle_set_settings()
+                    file.name === "Settings" || file.name === "Studio"
+                      ? handle_set_tab(file)
                       : handle_set_selected_file(file)
                   }
                   className={
@@ -159,8 +158,7 @@ const ContentSection = React.memo((props: any) => {
             options={{ suppressScrollX: true, wheelPropagation: false }}
           >
             {active_file?.name === "Settings" && <SettingsComponent />}
-
-            <div className="python-container" id="editor"></div>
+            {active_file?.name === "Studio" && <DataStudio />}
             <div className="editor-container" id="editor"></div>
           </PerfectScrollbar>
         </div>

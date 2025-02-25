@@ -31,9 +31,10 @@
 }
 
 :root {
-  --main-bg: #282c34;
-  --main-text-color: #dcdcdc;
-  --sidebar-bg: #282c34;
+  --main-bg: #2a292a;
+  --main-text-color: #d1d1d1;
+  --main-border-color: #444444;
+  --sidebar-bg: #2a292a;
   --sidebar-text-color: #dcdcdc;
   --sidebar-icon-color: #868686;
   --sidebar-icon-active-color: #d7d7d7;
@@ -119,7 +120,7 @@ body {
 .wrapper-component {
   display: grid;
   grid-template-rows: 35px 1fr 22px;
-  height: 90vh;
+  /* height: 90vh; */
   overflow: hidden;
   background: var(--main-bg);
 }
@@ -478,7 +479,6 @@ body {
   align-items: center;
   cursor: pointer;
   position: relative;
-
   border-bottom: 0;
 }
 
