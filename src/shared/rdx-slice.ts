@@ -27,7 +27,7 @@ const initialState: IMainState = {
   data_studio_active: { active: false } as TDataStudioActive,
   set_data_tool_type_tab: { active: true, data: [] } as DataPreviewToolsTab,
   sidebar_active: true,
-  terminal_active: true,
+  bottom_panel_active: true,
   toolsdata: null,
   tools_in_a_window: false,
   current_bottom_tab: 0,
@@ -94,8 +94,8 @@ export const mainSlice = createSlice({
     update_sidebar_active: (state, action: PayloadAction<boolean>) => {
       state.sidebar_active = action.payload;
     },
-    update_terminal_active: (state, action: PayloadAction<boolean>) => {
-      state.terminal_active = action.payload;
+    update_bottom_panel_active: (state, action: PayloadAction<boolean>) => {
+      state.bottom_panel_active = action.payload;
     },
     update_tools_data: (state, action: PayloadAction<any>) => {
       state.toolsdata = action.payload;
@@ -127,7 +127,7 @@ export const {
   update_env_vars,
   set_data_tool_tab,
   update_sidebar_active,
-  update_terminal_active,
+  update_bottom_panel_active,
   update_tools_data,
   update_tools_window_state,
   update_current_bottom_tab,

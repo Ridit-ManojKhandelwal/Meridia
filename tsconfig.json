@@ -16,5 +16,13 @@
       "*": ["node_modules/*"]
     }
   },
-  "include": ["src/**/*"]
+  "include": [
+    "src/**/*",
+    "extensions/meridiaui",
+    "apps/meridiachat",
+    "main/entries",
+    "main/renderer",
+    "main/index.ts",
+    "main/preload.ts"
+  ]
 }

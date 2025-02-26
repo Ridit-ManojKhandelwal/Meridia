@@ -10,6 +10,7 @@ interface Tab {
   key: number;
   closable: boolean;
   onTabClick?: Function;
+  tooltip?: string;
 }
 
 interface TabProps {
@@ -65,27 +66,30 @@ export const Tabs = ({
       <div className="anant-tabs-wrapper">
         <div className="anant-tabs">
           {tabs?.map((item) => (
-            <Tooltip text={item.name}>
-              <div
-                key={item.key}
-                className={`anant-tab ${activeTab === item.key && "anant-tab-active"} ${activeManualTab === item.key && "anant-tab-active"}`}
-                onClick={() => {
-                  setActiveTab(item.key);
-                  item.onTabClick();
-                }}
+            <div
+              key={item.key}
+              className={`anant-tab ${activeManualTab ? activeManualTab === item.key && "anant-tab-active" : activeTab === item.key && "anant-tab-active"}`}
+              onClick={() => {
+                setActiveTab(item.key);
+                item.onTabClick();
+              }}
+            >
+              <Tooltip
+                text={item.tooltip ? item.tooltip : item.name}
+                position="bottom"
               >
                 <span>{item.name}</span>
-                {item.closable && (
-                  <button
-                    key={item.key}
-                    className="anant-close-btn"
-                    onClick={() => removeTab(item.key)}
-                  >
-                    <CloseOutlined />
-                  </button>
-                )}
-              </div>
-            </Tooltip>
+              </Tooltip>
+              {item.closable && (
+                <button
+                  key={item.key}
+                  className="anant-close-btn"
+                  onClick={() => removeTab(item.key)}
+                >
+                  <CloseOutlined />
+                </button>
+              )}
+            </div>
           ))}
         </div>
 

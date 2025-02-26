@@ -11,9 +11,18 @@ import {
 import { useAppDispatch } from "../../../shared/hooks";
 import { useAppSelector } from "../../../shared/hooks";
 
-import Tooltip from "../../../meridiaui/tooltip/Tooltip";
+import Tooltip from "../../../../extensions/meridiaui/tooltip/Tooltip";
 
-import { update_terminal_active } from "../../../shared/rdx-slice";
+import { ReactComponent as PanelBottom } from "../../../assets/svg/layout-panel.svg";
+import { ReactComponent as PanelBottomOff } from "../../../assets/svg/layout-panel-off.svg";
+
+import { ReactComponent as PanelLeft } from "../../../assets/svg/layout-sidebar-left.svg";
+import { ReactComponent as PanelLeftOff } from "../../../assets/svg/layout-sidebar-left-off.svg";
+
+import {
+  update_sidebar_active,
+  update_bottom_panel_active,
+} from "../../../shared/rdx-slice";
 import { update_current_bottom_tab } from "../../../shared/rdx-slice";
 
 import Logo from "../../../assets/logo.png";
@@ -27,17 +36,25 @@ export default function Header() {
   const menuRef = useRef(null);
   const runRef = useRef<HTMLButtonElement>(null);
 
+  const sidebar_active = useAppSelector((state) => state.main.sidebar_active);
+  const bottom_panel_active = useAppSelector(
+    (state) => state.main.bottom_panel_active
+  );
+  const current_bottom_tab = useAppSelector(
+    (state) => state.main.current_bottom_tab
+  );
+  const dispatch = useAppDispatch();
+
   const folder_strucutre = useAppSelector(
     (state) => state.main.folder_structure
   );
 
-  const dispatch = useAppDispatch();
   const { active_file } = useAppSelector((state) => ({
     active_file: state.main.active_file,
   }));
 
   useEffect(() => {
-    window.electron.getMenu().then((menu) => {
+    window.electron.getMenu().then((menu: any) => {
       setMenuItems(menu || []);
     });
   }, []);
@@ -62,7 +79,7 @@ export default function Header() {
   }, [menuVisible]);
 
   const handleRun = async () => {
-    dispatch(update_terminal_active(true));
+    dispatch(update_bottom_panel_active(true));
     dispatch(update_current_bottom_tab(1));
     window.electron.run_code({
       path: active_file.path,
@@ -84,6 +101,64 @@ export default function Header() {
 
   window.electron.ipcRenderer.on("run-code-manual", () => {
     handleRun();
+  });
+
+  useEffect(() => {
+    const openTerminal = () => {
+      if (bottom_panel_active === true && current_bottom_tab === 2) {
+        dispatch(update_bottom_panel_active(false));
+      } else {
+        dispatch(update_bottom_panel_active(true));
+        dispatch(update_current_bottom_tab(2));
+      }
+    };
+
+    window.electron.ipcRenderer.on("open-terminal", openTerminal);
+
+    return () => {
+      window.electron.ipcRenderer.removeListener("open-terminal", openTerminal);
+    };
+  }, [dispatch]);
+
+  useEffect(() => {
+    const openOutput = () => {
+      if (bottom_panel_active && current_bottom_tab === 1) {
+        dispatch(update_bottom_panel_active(false));
+      } else {
+        dispatch(update_bottom_panel_active(true));
+        dispatch(update_current_bottom_tab(1));
+      }
+    };
+
+    window.electron.ipcRenderer.on("open-output", openOutput);
+
+    return () => {
+      window.electron.ipcRenderer.removeListener("open-output", openOutput);
+    };
+  }, [dispatch]);
+
+  useEffect(() => {
+    window.electron.ipcRenderer.on("open-bottom-panel", () => {
+      dispatch(update_bottom_panel_active(bottom_panel_active ? false : true));
+    });
+
+    return () =>
+      window.electron.ipcRenderer.removeListener(
+        "open-bottom-panel",
+        update_bottom_panel_active
+      );
+  });
+
+  useEffect(() => {
+    window.electron.ipcRenderer.on("open-sidebar", () => {
+      dispatch(update_sidebar_active(sidebar_active ? false : true));
+    });
+
+    return () =>
+      window.electron.ipcRenderer.removeListener(
+        "open-sidebar",
+        update_sidebar_active
+      );
   });
 
   return (
@@ -146,8 +221,45 @@ export default function Header() {
         )}
       </div>
       <div className="controls">
-        <button onClick={handleRun} ref={runRef}>
-          <CaretRightOutlined />
+        <Tooltip text="Run ( F5 )">
+          <button onClick={handleRun} ref={runRef}>
+            <CaretRightOutlined />
+          </button>
+        </Tooltip>
+      </div>
+      <div className="controls">
+        <button
+          onClick={() =>
+            dispatch(
+              update_bottom_panel_active(bottom_panel_active ? false : true)
+            )
+          }
+        >
+          {bottom_panel_active ? (
+            <Tooltip text="Toggle Panel ( Ctrl + ` )">
+              <PanelBottom />
+            </Tooltip>
+          ) : (
+            <Tooltip text="Toggle Panel ( Ctrl + ` )">
+              <PanelBottomOff />
+            </Tooltip>
+          )}
+        </button>
+
+        <button
+          onClick={() =>
+            dispatch(update_sidebar_active(sidebar_active ? false : true))
+          }
+        >
+          {sidebar_active ? (
+            <Tooltip text="Toggle Primary Sidebar ( Ctrl + B )">
+              <PanelLeft />
+            </Tooltip>
+          ) : (
+            <Tooltip text="Toggle Primary Sidebar ( Ctrl + B )">
+              <PanelLeftOff />
+            </Tooltip>
+          )}
         </button>
       </div>
     </div>

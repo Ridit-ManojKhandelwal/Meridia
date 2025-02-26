@@ -2,7 +2,7 @@ import os from "os";
 
 import * as pty from "node-pty";
 
-import { mainWindow } from "../main";
+import { mainWindow } from "..";
 
 let ptyProcess: pty.IPty;
 

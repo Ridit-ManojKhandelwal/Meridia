@@ -6,7 +6,7 @@ import ContentSection from "./sections/content/";
 import { BottomTabs } from "./bottom-section";
 
 import Header from "./sections/header/";
-import AnantChat from "../meridiachat";
+import AnantChat from "../../apps/meridiachat";
 
 import { ReactComponent as StudioIcon } from "../assets/svg/remote.svg";
 
@@ -28,13 +28,15 @@ import {
 
 import Navigator from "./sidebar-sections/navigator";
 
-import Tooltip from "../meridiaui/tooltip/Tooltip";
+import Tooltip from "../../extensions/meridiaui/tooltip/Tooltip";
 
 import "./index.css";
 
 export const App = () => {
   const sidebarActive = useAppSelector((state) => state.main.sidebar_active);
-  const terminalActive = useAppSelector((state) => state.main.terminal_active);
+  const bottomPanelActive = useAppSelector(
+    (state) => state.main.bottom_panel_active
+  );
   const active_files = useAppSelector((state) => state.main.active_files);
 
   const [activeItem, setActiveItem] = useState(0);
@@ -125,15 +127,11 @@ export const App = () => {
       );
   }, []);
 
-  useEffect(() => {
-    openMeridiaStudio();
-  }, []);
-
   return (
     <div
       className="wrapper-component"
       style={{
-        height: "99vh",
+        height: "100vh",
         display: "flex",
         flexDirection: "column",
         borderTop: "1px solid var(--border-color)",
@@ -149,7 +147,7 @@ export const App = () => {
           }}
         >
           <div className="top">
-            <Tooltip text="Navigator">
+            <Tooltip text="Navigator" position="right">
               <div
                 key={0}
                 className={`sidebar-item ${activeItem === 0 ? "active" : ""}`}
@@ -164,7 +162,7 @@ export const App = () => {
           </div>
 
           <div className="bottom">
-            <Tooltip text="MStudio (Ctrl+Shift+B)">
+            <Tooltip text="MStudio (Ctrl+Shift+B)" position="right">
               <div
                 key={2}
                 className={`sidebar-item ${activeItem === 2 ? "active" : ""}`}
@@ -175,7 +173,7 @@ export const App = () => {
                 <StudioIcon />
               </div>
             </Tooltip>
-            <Tooltip text="Settings (Ctrl+,)">
+            <Tooltip text="Settings (Ctrl+,)" position="right">
               <div
                 key={1}
                 className={`sidebar-item ${activeItem === 1 ? "active" : ""}`}
@@ -224,19 +222,19 @@ export const App = () => {
                 </Splitter>
               </Splitter.Panel>
 
-              {terminalActive && (
-                <Splitter.Panel
-                  defaultSize="30%"
-                  min="10%"
-                  max="90%"
-                  className="terminal"
-                  style={{
-                    borderTop: "1px solid var(--main-border-color)",
-                  }}
-                >
-                  <BottomTabs />
-                </Splitter.Panel>
-              )}
+              <Splitter.Panel
+                defaultSize="30%"
+                size={bottomPanelActive ? undefined : "0%"}
+                min="10%"
+                max="90%"
+                collapsible
+                className="terminal"
+                style={{
+                  borderTop: "1px solid var(--main-border-color)",
+                }}
+              >
+                <BottomTabs />
+              </Splitter.Panel>
             </Splitter>
           </Splitter.Panel>
         </Splitter>

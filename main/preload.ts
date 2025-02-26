@@ -5,9 +5,9 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { contextBridge } from "electron";
-import { renderer } from "../preload/renderer";
+import { renderer } from "./preload/renderer";
 
-import "../preload/scripts";
+import "./preload/scripts";
 
 contextBridge.exposeInMainWorld("electron", renderer);
 

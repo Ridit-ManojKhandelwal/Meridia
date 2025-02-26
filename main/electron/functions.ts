@@ -4,7 +4,7 @@ import {
   DATASTUDIO_VARIABLES_STORE_NAME,
   mainWindow,
   SELECTED_FOLDER_STORE_NAME,
-} from "../main";
+} from "..";
 
 import { get_files } from "./get_files";
 

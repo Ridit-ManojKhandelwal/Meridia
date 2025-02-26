@@ -124,3 +124,20 @@
   background: var(--selected);
   outline: 1px solid var(--blue);
 }
+
+.file.modified {
+  color: orange;
+}
+
+.file.untracked {
+  color: red;
+}
+
+.file.staged {
+  color: green;
+}
+
+.no-folder-selected-wrapper {
+  display: flex;
+  flex-direction: column;
+}

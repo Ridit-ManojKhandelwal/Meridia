@@ -6,8 +6,8 @@ import { IFolderStructure, TSelectedFile } from "../shared/types";
 import { update_active_files, update_indent } from "../shared/rdx-slice";
 import { store } from "../shared/store";
 
-import oneDark from "../theme/oneDark.json";
-import pythonLangData from "../languages/python/python.json";
+import oneDark from "../../theme/oneDark.json";
+import pythonLangData from "../../extensions/languages/python/python.json";
 
 import { App } from "./app";
 

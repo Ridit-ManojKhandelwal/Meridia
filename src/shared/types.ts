@@ -33,7 +33,7 @@ export interface IMainState {
   env_vars: TEnvVars;
   set_data_tool_type_tab: DataPreviewToolsTab;
   sidebar_active: boolean;
-  terminal_active: boolean;
+  bottom_panel_active: boolean;
   toolsdata: any;
   tools_in_a_window: boolean;
   current_bottom_tab: number;

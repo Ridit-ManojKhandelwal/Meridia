@@ -1,6 +1,6 @@
 import { ipcRenderer } from "electron";
 
-import { IEditorSettings } from "../shared/types";
+import { IEditorSettings } from "../../src/shared/types";
 
 export const renderer = {
   openFolder: async () => {
@@ -130,4 +130,7 @@ export const renderer = {
   getInstalledPackages: () => ipcRenderer.invoke("get-installed-packages"),
   searchPyPiPackages: (query: string) =>
     ipcRenderer.invoke("search-pypi-packages", query),
+  // get_git_statues: (repoPath: string) => {
+  //   ipcRenderer.invoke("get-git-status", repoPath);
+  // },
 };

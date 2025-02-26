@@ -1,7 +1,7 @@
 import { createRoot } from "react-dom/client";
 import { Provider } from "react-redux";
-import { store } from "../../shared/store";
-import App from "../../app";
+import { store } from "../../src/shared/store";
+import App from "../../src/app";
 
 const root = createRoot(document.querySelector("#root"));
 root.render(

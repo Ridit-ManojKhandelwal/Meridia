@@ -4,7 +4,7 @@ import { FitAddon } from "xterm-addon-fit";
 import "@xterm/xterm/css/xterm.css";
 
 export const Terminal = ({ history, updateHistory }: any) => {
-  const terminalRef = useRef(null);
+  const terminalRef = useRef<HTMLDivElement | null>(null);
   const terminalInstance = useRef(null);
   const fitAddon = useRef(null);
 
@@ -48,7 +48,7 @@ export const Terminal = ({ history, updateHistory }: any) => {
 
     history.forEach((line: any) => term.write(line));
 
-    window.electron.ipcRenderer.send("terminal.keystroke", { key: "\r" });
+    window.electron.ipcRenderer.send("terminal.keystroke", "\r");
 
     const sendResizeRequest = () => {
       if (terminalInstance.current) {
@@ -65,6 +65,8 @@ export const Terminal = ({ history, updateHistory }: any) => {
         sendResizeRequest();
       }
     };
+
+    terminalRef.current.addEventListener("resize", handleResize);
 
     window.addEventListener("resize", handleResize);
 

@@ -6,7 +6,7 @@ import { IEditorSettings, IFolderStructure } from "./shared/types";
 import { set_folder_structure, update_settings } from "./shared/rdx-slice";
 import { ConfigProvider, theme } from "antd/es";
 import { PrimeReactProvider } from "primereact/api";
-import { AnantProvider } from "./meridiaui";
+import { AnantProvider } from "../extensions/meridiaui";
 
 const App = React.memo((props: any) => {
   const dispatch = useAppDispatch();

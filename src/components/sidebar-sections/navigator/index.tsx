@@ -12,7 +12,7 @@ import { TActiveFile } from "../../../shared/types";
 
 import { store } from "../../../shared/store";
 
-import useTraverseTree from "../../../hooks/use-traverse-tree";
+import useTraverseTree from "../../../shared/hooks/use-traverse-tree";
 
 import Folder from "./folder";
 

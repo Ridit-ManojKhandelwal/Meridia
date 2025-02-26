@@ -56,11 +56,13 @@ const TooltipWrapper = styled.div`
 const Tooltip = ({
   text,
   children,
+  position,
 }: {
   text: string;
   children: React.ReactNode;
+  position?: string;
 }) => {
-  const [position, setPosition] = useState("top");
+  const [manlPosition, setPosition] = useState(position ? position : "bottom");
   const tooltipRef = useRef<HTMLSpanElement | null>(null);
 
   useEffect(() => {
@@ -68,14 +70,16 @@ const Tooltip = ({
       const rect = tooltipRef.current.getBoundingClientRect();
       const padding = 10;
 
-      if (rect.right > window.innerWidth - padding) {
-        setPosition("left");
-      } else if (rect.left < padding) {
-        setPosition("right");
-      } else if (rect.top < padding) {
-        setPosition("bottom");
-      } else {
-        setPosition("top");
+      if (position === undefined) {
+        if (rect.right > window.innerWidth - padding) {
+          setPosition("left");
+        } else if (rect.left < padding) {
+          setPosition("right");
+        } else if (rect.top < padding) {
+          setPosition("bottom");
+        } else {
+          setPosition("top");
+        }
       }
     }
   }, [text]);

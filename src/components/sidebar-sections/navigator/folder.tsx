@@ -150,9 +150,39 @@ const Folder = React.memo(({ handleInsertNode = () => {}, explorer }: any) => {
     folder != undefined && dispatch(set_folder_structure(folder));
   }, []);
 
-  if (explorer === undefined)
-    return <button onClick={handle_open_folder}>Open Directory</button>;
-  else {
+  // useEffect(() => {
+  //   async function fetchGitStatus() {
+  //     const repoPath = explorer.root; // Root directory of repo
+  //     const statusFiles: any = await window.electron.get_git_statues(repoPath);
+
+  //     const statusMap: Record<string, string> = {};
+  //     statusFiles.forEach((file: any) => {
+  //       statusMap[file.path] = file.working_dir;
+  //     });
+
+  //     console.log("status file", statusFiles);
+
+  //     setGitStatus(statusMap);
+  //   }
+
+  //   fetchGitStatus();
+  // }, [explorer.root]);
+
+  // const getFileStatus = (filePath: string) => {
+  //   if (gitStatus[filePath] === "?") return "untracked";
+  //   if (gitStatus[filePath] === "M") return "modified";
+  //   if (gitStatus[filePath] === "A") return "staged";
+  //   return "";
+  // };
+
+  if (Object.keys(explorer).length == 0) {
+    return (
+      <div className="no-folder-selected-wrapper">
+        <p>Select Folder</p>
+        <button onClick={handle_open_folder}>Open Directory</button>
+      </div>
+    );
+  } else {
     if (explorer.isFolder) {
       return (
         <div style={{ marginTop: 5 }} className="folder-container">
@@ -225,6 +255,12 @@ const Folder = React.memo(({ handleInsertNode = () => {}, explorer }: any) => {
             type: `${explorer.name}`.split(".").at(-1),
           })}
           {explorer.name}
+          {/* {getFileStatus(path_join([explorer.path, explorer.name])) ===
+            "modified" && <span>🟡</span>}
+          {getFileStatus(path_join([explorer.path, explorer.name])) ===
+            "untracked" && <span>🔴</span>}
+          {getFileStatus(path_join([explorer.path, explorer.name])) ===
+            "staged" && <span>🟢</span>} */}
         </span>
       );
     }

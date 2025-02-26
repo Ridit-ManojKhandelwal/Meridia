@@ -14,7 +14,7 @@ import {
 
 import "./styling/index.css";
 import "./styling/table.css";
-import Tooltip from "../../meridiaui/tooltip/Tooltip";
+import Tooltip from "../../../extensions/meridiaui/tooltip/Tooltip";
 
 export const Tools = () => {
   let data = useAppSelector((state) => state.main.toolsdata);
