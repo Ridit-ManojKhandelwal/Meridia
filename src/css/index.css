@@ -579,7 +579,17 @@ body {
 .no-selected-files span {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: 4px;
+  font-size: 13px;
+  padding: 0 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.2s ease-in-out;
+}
+
+.no-selected-files span:hover {
+  background: var(--file-list-bg);
 }
 
 .no-selected-files span code {

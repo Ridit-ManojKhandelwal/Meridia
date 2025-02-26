@@ -4,6 +4,8 @@ import { useAppDispatch, useAppSelector } from "../../../shared/hooks";
 import {
   update_active_file,
   update_active_files,
+  update_bottom_panel_active,
+  update_current_bottom_tab,
 } from "../../../shared/rdx-slice";
 import FileIcon from "../../../shared/file-icon";
 
@@ -17,6 +19,8 @@ import { ReactComponent as TimesIcon } from "../../../assets/svg/times.svg";
 import PerfectScrollbar from "react-perfect-scrollbar";
 
 import { MainContext } from "../../../shared/functions";
+
+import Icon from "../../../assets/logo-500x500.png";
 
 const ContentSection = React.memo((props: any) => {
   const dispatch = useAppDispatch();
@@ -73,7 +77,6 @@ const ContentSection = React.memo((props: any) => {
 
     let next_index = index_to_remove === 0 ? 0 : index_to_remove - 1;
 
-    // Ensure the next index is within bounds
     if (next_index < 0 || next_index >= _clone.length) {
       next_index = _clone.length - 1;
     }
@@ -115,7 +118,51 @@ const ContentSection = React.memo((props: any) => {
         <div className="default-screen"></div>
       )}
       {Object.keys(folder_structure).length > 0 && active_files.length == 0 ? (
-        <div></div>
+        <div className="no-selected-files">
+          <span
+            onClick={() => {
+              dispatch(update_bottom_panel_active(true));
+              dispatch(update_current_bottom_tab(2));
+            }}
+          >
+            <p>Terminal</p>
+            <code>Ctrl + `</code>
+          </span>
+          <span
+            onClick={() => {
+              dispatch(update_bottom_panel_active(true));
+              dispatch(update_current_bottom_tab(1));
+            }}
+          >
+            <p>Output</p>
+            <code>Ctrl + k</code>
+          </span>
+          <span
+            onClick={() => {
+              if (active_file === undefined) return;
+              window.electron.run_code({ path: active_file.path, script: "" });
+            }}
+          >
+            <p>Run</p>
+            <code>F5</code>
+          </span>
+          <span
+            onClick={() => {
+              window.electron.ipcRenderer.send("open-meridia-studio", "");
+            }}
+          >
+            <p>MStudio</p>
+            <code>Ctrl + Shift + B</code>
+          </span>
+          <span
+            onClick={() => {
+              window.electron.ipcRenderer.send("open-settings", "");
+            }}
+          >
+            <p>Settings</p>
+            <code>Ctrl + `</code>
+          </span>
+        </div>
       ) : (
         <div className="content-inner">
           <PerfectScrollbar className="page-tabs-cont" style={{ zIndex: 9 }}>
@@ -155,7 +202,11 @@ const ContentSection = React.memo((props: any) => {
             </div>
           </PerfectScrollbar>
           <PerfectScrollbar
-            options={{ suppressScrollX: true, wheelPropagation: false }}
+            options={{
+              suppressScrollX: true,
+              wheelPropagation: false,
+              suppressScrollY: true,
+            }}
           >
             {active_file?.name === "Settings" && <SettingsComponent />}
             {active_file?.name === "Studio" && <DataStudio />}

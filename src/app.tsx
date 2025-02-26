@@ -13,11 +13,10 @@ const App = React.memo((props: any) => {
   const settingsDe = useAppSelector((state) => state.main.editorSettings);
 
   const checkFirstTime = React.useCallback(() => {
-    const isFirstTime =
-      localStorage.getItem("meridia_first_time_launch") === null;
+    const isFirstTime = localStorage.getItem("mnovus_meridia") === null;
     if (isFirstTime) {
       window.electron.set_settings(settingsDe);
-      localStorage.setItem("meridia_first_time_launch", "false");
+      localStorage.setItem("mnovus_meridia", "false");
     }
   }, []);
 
@@ -34,7 +33,6 @@ const App = React.memo((props: any) => {
 
   React.useLayoutEffect(() => {
     checkFirstTime();
-
     get_folder();
     get_settings();
   }, []);

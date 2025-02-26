@@ -140,4 +140,26 @@
 .no-folder-selected-wrapper {
   display: flex;
   flex-direction: column;
+  text-align: center;
+  align-items: center;
+}
+
+.no-folder-selected-wrapper p {
+  font-family: "Jetbrains Mono";
+  font-size: 20px;
+}
+
+.no-folder-selected-wrapper button {
+  background: var(--blue);
+  color: var(--main-text-color);
+  width: 80%;
+  padding: 8px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+}
+
+.no-folder-selected-wrapper button:hover {
+  opacity: 0.8;
 }
