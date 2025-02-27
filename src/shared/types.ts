@@ -39,6 +39,56 @@ export interface IMainState {
   current_bottom_tab: number;
   output_history: [{ output: string }];
   editorSettings: IEditorSettings;
+  uiState: IUIState;
+  ui: IUI;
+}
+
+export interface IUIState {
+  active_files: TActiveFile[];
+  active_file: TActiveFile;
+  current_bottom_tab: number;
+  sidebar_active: boolean;
+  bottom_panel_active: boolean;
+}
+
+export interface IUI {
+  header: Array<{
+    name: string;
+    type: string | "run-file" | "layout";
+    tooltip: string;
+    shortcut: string;
+  }>;
+  sidebar: Array<{
+    name: string;
+    position: string | "top" | "bottom";
+    tooltip: string;
+    shortcut: string;
+    content: "content" | "settings" | "mstudio";
+  }>;
+  footer: Array<{
+    name: string;
+    type:
+      | "project-name"
+      | "selected-file-language"
+      | "extensions"
+      | "editor-indent"
+      | "editor-spaces"
+      | "editor-utf";
+    text:
+      | "[project-name]"
+      | "[file-language]"
+      | "[extensions-footer-items-text]"
+      | "[editor-indent]"
+      | "[editor-spaces]"
+      | "[editor-utf]";
+    tooltip:
+      | "[extensions-footer-items-tooltip]"
+      | "[file-language]"
+      | "[project-name]"
+      | "[editor-indent]"
+      | "[editor-spaces]"
+      | "[editor-utf]";
+  }>;
 }
 
 export interface IEditorSettings {
@@ -68,6 +118,7 @@ export interface IEditorSettings {
   bracketPairColorization: { enabled: boolean };
   screenReaderAnnounceInlineSuggestion: boolean;
   parameterHints: { enabled: boolean };
+  floatingPreview: boolean;
 }
 
 export type TDataStudioActive = {
@@ -80,6 +131,7 @@ export type TActiveFile = {
   name: any;
   icon: string;
   is_touched: boolean;
+  content: string;
 };
 
 // Editor Indent Type

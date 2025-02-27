@@ -114,10 +114,11 @@ const ContentSection = React.memo((props: any) => {
 
   return (
     <div className="content-section">
-      {Object.keys(folder_structure).length == 0 && (
+      {Object.keys(folder_structure)?.length == 0 && (
         <div className="default-screen"></div>
       )}
-      {Object.keys(folder_structure).length > 0 && active_files.length == 0 ? (
+      {Object.keys(folder_structure)?.length > 0 &&
+      active_files?.length == 0 ? (
         <div className="no-selected-files">
           <span
             onClick={() => {
@@ -167,7 +168,7 @@ const ContentSection = React.memo((props: any) => {
         <div className="content-inner">
           <PerfectScrollbar className="page-tabs-cont" style={{ zIndex: 9 }}>
             <div className="tabs">
-              {active_files.map((file, index) => (
+              {active_files?.map((file, index) => (
                 <div
                   key={file.path}
                   onClick={() =>

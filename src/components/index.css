@@ -58,3 +58,9 @@
 .editor-container.fade-in {
   opacity: 1;
 }
+
+.print-output-decoration {
+  color: #ffa500;
+  font-style: italic;
+  margin-left: 10px;
+}

@@ -36,7 +36,12 @@ const SettingsComponent = () => {
       "cursorSmoothCaretAnimation",
     ],
     Performance: ["renderWhitespace", "fontLigatures"],
-    Advanced: ["suggestSelection", "bracketPairColorization", "minimap"],
+    Advanced: [
+      "suggestSelection",
+      "bracketPairColorization",
+      "minimap",
+      "floatingPreview",
+    ],
   };
 
   const settingOptions: Record<string, string[]> = {
@@ -57,6 +62,7 @@ const SettingsComponent = () => {
     minimap: ["on", "off"],
     renderWhitespace: ["none", "boundary", "selection", "all"],
     fontLigatures: ["on", "off"],
+    floatingPreview: ["on", "off"],
   };
 
   return (

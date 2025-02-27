@@ -163,3 +163,47 @@
 .no-folder-selected-wrapper button:hover {
   opacity: 0.8;
 }
+
+.file-preview {
+  position: fixed;
+  left: 15%;
+  width: 500px;
+  height: 300px;
+  background: #1e1e1e;
+  border: 1px solid #333;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  border-radius: 8px;
+  transform: translateY(10px);
+  z-index: 1000;
+  overflow: hidden;
+  opacity: 0;
+  transition:
+    opacity 0.3s ease-in-out,
+    transform 0.3s ease-in-out;
+}
+
+.file-preview.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.file-preview.hide {
+  opacity: 0;
+  z-index: 0;
+}
+.file-preview.pinned {
+  display: block !important;
+}
+
+.pin-button {
+  background: #444;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  cursor: pointer;
+  margin-bottom: 5px;
+}
+
+.pin-button:hover {
+  background: #666;
+}

@@ -65,7 +65,7 @@ const MainComponent = React.memo((props: any) => {
         new_model = monaco.editor.createModel(
           selected_file.content || "",
           get_file_types(selected_file.name) || "plaintext",
-          monaco.Uri.parse(`file://${selected_file.path}`)
+          monaco.Uri.parse(selected_file.path)
         );
       }
 
@@ -131,20 +131,39 @@ const MainComponent = React.memo((props: any) => {
       );
 
       editor_ref.current.onDidChangeModelContent(() => {
-        const model_editing_index = store
+        // const model_editing_index = store
+        //   .getState()
+        //   .main.active_files.findIndex(
+        //     (file) => file.path === editor_ref.current.getModel().uri.path
+        //   );
+
+        // const model_editing = {
+        //   ...store.getState().main.active_files[model_editing_index],
+        // };
+        // const _active_file = [...store.getState().main.active_files];
+
+        // model_editing.is_touched = true;
+        // model_editing.content = editor_ref.current.getModel().getValue();
+        // _active_file[model_editing_index] = model_editing;
+        // dispatch(update_active_files(_active_file));
+
+        if (!editor_ref.current || !editor_ref.current.getModel()) return;
+
+        const filePath = editor_ref.current.getModel().uri.path;
+        const fileIndex = store
           .getState()
-          .main.active_files.findIndex(
-            (file) => file.path === editor_ref.current.getModel().uri.path
-          );
+          .main.active_files.findIndex((file) => file.path === filePath);
 
-        const model_editing = {
-          ...store.getState().main.active_files[model_editing_index],
-        };
-        const _active_file = [...store.getState().main.active_files];
+        if (fileIndex !== -1) {
+          const updatedFiles = [...store.getState().main.active_files];
+          updatedFiles[fileIndex] = {
+            ...updatedFiles[fileIndex],
+            is_touched: true,
+            content: editor_ref.current.getValue(),
+          };
 
-        model_editing.is_touched = true;
-        _active_file[model_editing_index] = model_editing;
-        dispatch(update_active_files(_active_file));
+          dispatch(update_active_files(updatedFiles));
+        }
       });
 
       editor_ref.current.onDidChangeCursorPosition((e) => {
@@ -185,6 +204,41 @@ const MainComponent = React.memo((props: any) => {
 
           return { suggestions };
         },
+      });
+
+      const updatePrintDecorations = async () => {
+        const editor = editor_ref.current;
+        if (!editor) return;
+
+        const model = editor.getModel();
+        if (!model) return;
+
+        const code = model.getValue();
+        const outputMap = (await window.electron.run_python_code(code)) || {}; // ✅ Ensure valid object
+
+        console.log(outputMap);
+
+        if (!outputMap || typeof outputMap !== "object") {
+          console.warn("Invalid outputMap received:", outputMap);
+          return;
+        }
+
+        const decorations = Object.entries(outputMap).map(([line, output]) => ({
+          range: new monaco.Range(parseInt(line), 1, parseInt(line), 1),
+          options: {
+            isWholeLine: false,
+            after: {
+              content: ` ⟶ ${output}`,
+              inlineClassName: "print-output-decoration",
+            },
+          },
+        }));
+
+        editor.deltaDecorations([], decorations);
+      };
+
+      editor_ref.current.onDidChangeModelContent(() => {
+        // updatePrintDecorations();
       });
     },
     [editor_ref.current, editor_files_ref.current, active_files]

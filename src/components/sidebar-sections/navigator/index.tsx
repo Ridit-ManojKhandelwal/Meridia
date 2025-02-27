@@ -49,6 +49,7 @@ const Navigator = React.memo((props: any) => {
         path: full_path,
         name: branch_name,
         is_touched: false,
+        content: get_file_content,
       };
 
       const selected_file = {

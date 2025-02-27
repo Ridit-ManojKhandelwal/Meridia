@@ -26,10 +26,6 @@
   src: url("/src/assets/fonts/consolas.ttf") format("truetype");
 }
 
-.footer-section * {
-  overflow: hidden;
-}
-
 :root {
   --main-bg: #2a292a;
   --main-text-color: #d1d1d1;
@@ -619,7 +615,7 @@ body {
 }
 
 .folder-tree {
-  display: block !important;
+  /* display: block !important; */
   background: var(--sidebar-bg);
   height: 100%;
 }
@@ -633,12 +629,10 @@ body {
 
 .folder-tree .explorer-content-wrapper {
   height: 100%;
-  overflow: hidden;
   display: grid !important;
 }
 
 .folder-tree .explorer-content-wrapper .content-list-outer-container {
-  overflow: hidden;
   display: flex;
   flex-direction: column;
 }

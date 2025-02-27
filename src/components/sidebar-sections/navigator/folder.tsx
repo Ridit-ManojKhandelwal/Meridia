@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { path_join } from "../../../shared/functions";
+import React, { useRef, useState } from "react";
+import { get_file_types, path_join } from "../../../shared/functions";
 
 import {
   FileAddFilled,
@@ -22,20 +22,74 @@ import { IFolderStructure, TActiveFile } from "../../../shared/types";
 
 import { store } from "../../../shared/store";
 
+import * as monaco from "monaco-editor";
+
 import "./style.css";
 
 const Folder = React.memo(({ handleInsertNode = () => {}, explorer }: any) => {
-  const [expand, setExpand] = useState(false);
+  const [showPreview, setShowPreview] = useState(false);
+
+  const [_, setPreviewContent] = useState<string>("");
+
+  const previewRef = useRef<HTMLDivElement | null>(null);
+  const editorRef = useRef<monaco.editor.IStandaloneCodeEditor | null>(null);
+
+  const [expand, setExpand] = useState(explorer.name === explorer.root);
+
   const [showInput, setShowInput] = useState({
     visible: false,
     isFolder: null,
   });
-  const [selectedItem, setSelectedItem] = useState<string | null>(null);
 
   const active_files = useAppSelector((state) => state.main.active_files);
+  const active_file = useAppSelector((state) => state.main.active_file);
   const useMainContextIn = React.useContext(MainContext);
 
+  const previewTimeout = useRef<NodeJS.Timeout | null>(null);
+
+  const settings = useAppSelector((state) => state.main.editorSettings);
+
   const dispatch = useAppDispatch();
+
+  const handleMouseEnter = async () => {
+    previewTimeout.current = setTimeout(async () => {
+      setShowPreview(true);
+      const content = await window.electron.get_file_content(explorer.path);
+      setPreviewContent(content);
+
+      if (previewRef.current) {
+        if (editorRef.current) {
+          editorRef.current.dispose();
+          editorRef.current = null;
+        }
+        editorRef.current = monaco.editor.create(previewRef.current, {
+          value: content,
+          language: get_file_types(explorer.name) || "plaintext",
+          theme: "vs-dark",
+          readOnly: true,
+          minimap: { enabled: false },
+          automaticLayout: true,
+        });
+
+        if (active_file?.name === explorer?.name) {
+          console.log("content changed found");
+          editorRef.current.setValue(active_file.content || "");
+        }
+      }
+    }, 200); // Adds a slight delay for smoothness
+  };
+
+  const handleMouseLeave = () => {
+    if (previewTimeout.current) {
+      clearTimeout(previewTimeout.current);
+      previewTimeout.current = null;
+    }
+    setShowPreview(false);
+    if (editorRef.current) {
+      editorRef.current.dispose();
+      editorRef.current = null;
+    }
+  };
 
   const sortedItems = Array.isArray(explorer.items)
     ? [...explorer.items].sort((a, b) => {
@@ -65,6 +119,7 @@ const Folder = React.memo(({ handleInsertNode = () => {}, explorer }: any) => {
         path: full_path,
         name: branch_name,
         is_touched: false,
+        content: get_file_content,
       };
 
       const selected_file = {
@@ -116,15 +171,16 @@ const Folder = React.memo(({ handleInsertNode = () => {}, explorer }: any) => {
 
       console.log(explorer.id);
       try {
+        console.log(explorer);
         if (showInput.isFolder) {
           await window.electron.create_folder({
-            path: path_join([explorer.name, newName]),
+            path: path_join([explorer.root, newName]),
             fileName: newName,
             rootPath: explorer.root,
           });
         } else {
           await window.electron.create_file({
-            path: path_join([explorer.name, newName]),
+            path: path_join([explorer.root, newName]),
             fileName: newName,
             rootPath: explorer.root,
           });
@@ -149,31 +205,6 @@ const Folder = React.memo(({ handleInsertNode = () => {}, explorer }: any) => {
     const folder = (await window.electron.openFolder()) as IFolderStructure;
     folder != undefined && dispatch(set_folder_structure(folder));
   }, []);
-
-  // useEffect(() => {
-  //   async function fetchGitStatus() {
-  //     const repoPath = explorer.root; // Root directory of repo
-  //     const statusFiles: any = await window.electron.get_git_statues(repoPath);
-
-  //     const statusMap: Record<string, string> = {};
-  //     statusFiles.forEach((file: any) => {
-  //       statusMap[file.path] = file.working_dir;
-  //     });
-
-  //     console.log("status file", statusFiles);
-
-  //     setGitStatus(statusMap);
-  //   }
-
-  //   fetchGitStatus();
-  // }, [explorer.root]);
-
-  // const getFileStatus = (filePath: string) => {
-  //   if (gitStatus[filePath] === "?") return "untracked";
-  //   if (gitStatus[filePath] === "M") return "modified";
-  //   if (gitStatus[filePath] === "A") return "staged";
-  //   return "";
-  // };
 
   if (Object.keys(explorer).length == 0) {
     return (
@@ -238,10 +269,7 @@ const Folder = React.memo(({ handleInsertNode = () => {}, explorer }: any) => {
         <span
           className={`file`}
           onClick={() => {
-            handle_set_editor(
-              explorer.name,
-              path_join([explorer.path, explorer.name])
-            );
+            handle_set_editor(explorer.name, explorer.path);
           }}
           onAuxClick={() =>
             window.electron.show_contextmenu({
@@ -250,17 +278,20 @@ const Folder = React.memo(({ handleInsertNode = () => {}, explorer }: any) => {
               rootPath: explorer.root,
             })
           }
+          onMouseEnter={handleMouseEnter}
+          onMouseLeave={handleMouseLeave}
         >
           {FileIcon({
             type: `${explorer.name}`.split(".").at(-1),
           })}
           {explorer.name}
-          {/* {getFileStatus(path_join([explorer.path, explorer.name])) ===
-            "modified" && <span>🟡</span>}
-          {getFileStatus(path_join([explorer.path, explorer.name])) ===
-            "untracked" && <span>🔴</span>}
-          {getFileStatus(path_join([explorer.path, explorer.name])) ===
-            "staged" && <span>🟢</span>} */}
+          {showPreview && (
+            <div
+              className="file-preview show"
+              ref={previewRef}
+              onClick={(e) => e.stopPropagation()}
+            />
+          )}
         </span>
       );
     }

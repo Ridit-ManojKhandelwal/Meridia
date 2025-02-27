@@ -17,9 +17,4 @@ export const mainConfig: Configuration = {
   resolve: {
     extensions: [".js", ".ts", ".jsx", ".tsx", ".css", ".json"],
   },
-
-  // externals: {c
-  //   "@cocktailpeanut/node-pty-prebuilt-multiarch":
-  //     "commonjs @cocktailpeanut/node-pty-prebuilt-multiarch",
-  // },
 };

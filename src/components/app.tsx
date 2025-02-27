@@ -17,6 +17,7 @@ import {
   update_active_file,
   update_active_files,
   update_sidebar_active,
+  update_ui_state,
 } from "../shared/rdx-slice";
 import { store } from "../shared/store";
 
@@ -32,27 +33,30 @@ import Tooltip from "../../extensions/meridiaui/tooltip/Tooltip";
 
 import "./index.css";
 
+const iconMap: Record<string, JSX.Element> = {
+  Navigator: <FolderOutlined />,
+  Settings: <SettingOutlined />,
+  "Meridia Studio": <StudioIcon />,
+};
+
 export const App = () => {
   const sidebarActive = useAppSelector((state) => state.main.sidebar_active);
   const bottomPanelActive = useAppSelector(
     (state) => state.main.bottom_panel_active
   );
-  const active_files = useAppSelector((state) => state.main.active_files);
 
-  const [activeItem, setActiveItem] = useState(0);
+  const ui = useAppSelector((state) => state.main.ui);
+
+  const [activeItem, setActiveItem] = useState("Navigator");
 
   const dispatch = useAppDispatch();
 
   const items = [
     {
+      name: "Navigator",
       key: 0,
       icon: <FolderOutlined />,
       content: <Navigator />,
-    },
-
-    {
-      key: 1,
-      icon: <SettingOutlined />,
     },
   ];
 
@@ -64,6 +68,7 @@ export const App = () => {
       name: "Settings",
       icon: "settings",
       is_touched: false,
+      content: "",
     };
 
     const current_active_files = [...store.getState().main.active_files];
@@ -89,6 +94,7 @@ export const App = () => {
       name: "Studio",
       icon: "Studio",
       is_touched: false,
+      content: "",
     };
 
     const current_active_files = [...store.getState().main.active_files];
@@ -127,6 +133,32 @@ export const App = () => {
       );
   }, []);
 
+  // useEffect(() => {
+  //   const newState = {
+  //     active_file,
+  //     active_files,
+  //     bottom_panel_active,
+  //     sidebar_active,
+  //     current_bottom_tab,
+  //   };
+
+  //   dispatch(update_ui_state(newState));
+  //   console.log("state", newState);
+  //   window.electron.set_ui_state(newState);
+  // }, [
+  //   active_files,
+  //   sidebar_active,
+  //   bottom_panel_active,
+  //   // active_file.path,
+  //   current_bottom_tab,
+  // ]);
+
+  async function getUi() {
+    console.log("ui", await window.electron.get_ui());
+  }
+
+  getUi();
+
   return (
     <div
       className="wrapper-component"
@@ -140,50 +172,77 @@ export const App = () => {
     >
       <Header />
       <div className="middle-section" style={{ flex: 1, display: "flex" }}>
-        <div
-          className="sidebar"
-          style={{
-            background: "#363636",
-          }}
-        >
+        <div className="sidebar" style={{ background: "#363636" }}>
           <div className="top">
-            <Tooltip text="Navigator" position="right">
-              <div
-                key={0}
-                className={`sidebar-item ${activeItem === 0 ? "active" : ""}`}
-                onClick={() => {
-                  setActiveItem(activeItem === 0 ? -1 : 0);
-                  dispatch(update_sidebar_active(activeItem !== 0));
-                }}
-              >
-                <FolderOutlined />
-              </div>
-            </Tooltip>
+            {ui.sidebar
+              .filter((item) => item.position === "top")
+              .map((item, index) => (
+                <Tooltip
+                  key={index}
+                  text={item.tooltip + " (" + item.shortcut + ")"}
+                  position="right"
+                >
+                  <div
+                    className={`sidebar-item ${activeItem === item.name ? "active" : ""}`}
+                    onClick={() => {
+                      if (item.content === "settings") {
+                        openSettings();
+                      }
+                      if (item.content === "mstudio") {
+                        openMeridiaStudio();
+                      }
+                      if (item.content === "content") {
+                        setActiveItem(
+                          activeItem === item.name ? null : item.name
+                        );
+                        dispatch(
+                          update_sidebar_active(
+                            activeItem === item.name ? false : true
+                          )
+                        );
+                      }
+                    }}
+                  >
+                    {iconMap[item.name] || <FolderOutlined />}
+                  </div>
+                </Tooltip>
+              ))}
           </div>
 
           <div className="bottom">
-            <Tooltip text="MStudio (Ctrl+Shift+B)" position="right">
-              <div
-                key={2}
-                className={`sidebar-item ${activeItem === 2 ? "active" : ""}`}
-                onClick={() => {
-                  openMeridiaStudio();
-                }}
-              >
-                <StudioIcon />
-              </div>
-            </Tooltip>
-            <Tooltip text="Settings (Ctrl+,)" position="right">
-              <div
-                key={1}
-                className={`sidebar-item ${activeItem === 1 ? "active" : ""}`}
-                onClick={() => {
-                  openSettings();
-                }}
-              >
-                <SettingOutlined />
-              </div>
-            </Tooltip>
+            {ui.sidebar
+              .filter((item) => item.position === "bottom")
+              .map((item, index) => (
+                <Tooltip
+                  key={index}
+                  text={item.tooltip + " (" + item.shortcut + ")"}
+                  position="right"
+                >
+                  <div
+                    className={`sidebar-item ${activeItem === item.name ? "active" : ""}`}
+                    onClick={() => {
+                      if (item.content === "settings") {
+                        openSettings();
+                      }
+                      if (item.content === "mstudio") {
+                        openMeridiaStudio();
+                      }
+                      if (item.content === "content") {
+                        setActiveItem(
+                          activeItem === item.name ? null : item.name
+                        );
+                        dispatch(
+                          update_sidebar_active(
+                            activeItem === item.name ? false : true
+                          )
+                        );
+                      }
+                    }}
+                  >
+                    {iconMap[item.name] || <FolderOutlined />}
+                  </div>
+                </Tooltip>
+              ))}
           </div>
         </div>
 
@@ -212,7 +271,10 @@ export const App = () => {
                   >
                     <PerfectScrollbar>
                       <div>
-                        {items.find((item) => item.key === activeItem)?.content}
+                        {
+                          items.find((item) => item.name === activeItem)
+                            ?.content
+                        }
                       </div>
                     </PerfectScrollbar>
                   </Splitter.Panel>

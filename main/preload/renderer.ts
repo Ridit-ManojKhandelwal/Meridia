@@ -1,6 +1,6 @@
 import { ipcRenderer } from "electron";
 
-import { IEditorSettings } from "../../src/shared/types";
+import { IEditorSettings, IUI, IUIState } from "../../src/shared/types";
 
 export const renderer = {
   openFolder: async () => {
@@ -26,13 +26,36 @@ export const renderer = {
     const settings = await ipcRenderer.invoke("get-settings");
     return settings;
   },
-
   clear_settings: () => {
     ipcRenderer.send("clear-settings");
   },
 
   set_settings: (settings: IEditorSettings) => {
     ipcRenderer.send("set-settings", settings);
+  },
+
+  get_ui_state: async () => {
+    const state = await ipcRenderer.invoke("get-ui-state");
+    return state;
+  },
+  clear_ui_state: () => {
+    ipcRenderer.send("clear-ui-state");
+  },
+
+  set_ui_state: (state: IUIState) => {
+    ipcRenderer.send("set-ui-state", state);
+  },
+
+  get_ui: async () => {
+    const ui = await ipcRenderer.invoke("get-ui");
+    return ui;
+  },
+  clear_ui: () => {
+    ipcRenderer.send("clear-ui");
+  },
+
+  set_ui: (ui: IUI) => {
+    ipcRenderer.send("set-ui", ui);
   },
 
   get_file_content: async (path: string) => {
@@ -130,7 +153,13 @@ export const renderer = {
   getInstalledPackages: () => ipcRenderer.invoke("get-installed-packages"),
   searchPyPiPackages: (query: string) =>
     ipcRenderer.invoke("search-pypi-packages", query),
-  // get_git_statues: (repoPath: string) => {
-  //   ipcRenderer.invoke("get-git-status", repoPath);
-  // },
+  run_python_code: async (code: string) => {
+    try {
+      const result = await ipcRenderer.invoke("run-python-code", code);
+      return result ?? {}; // Ensure an empty object if result is null/undefined
+    } catch (error) {
+      console.error("Error running Python code:", error);
+      return {}; // Return an empty object instead of undefined
+    }
+  },
 };

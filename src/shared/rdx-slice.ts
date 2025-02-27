@@ -9,6 +9,8 @@ import {
   TEnvVars,
   DataPreviewToolsTab,
   IEditorSettings,
+  IUIState,
+  IUI,
 } from "./types";
 
 // Define the initial state using that type
@@ -55,7 +57,50 @@ const initialState: IMainState = {
     bracketPairColorization: { enabled: true },
     screenReaderAnnounceInlineSuggestion: true,
     parameterHints: { enabled: true },
+    floatingPreview: true,
   },
+  uiState: {
+    active_file: {
+      name: "",
+      path: "",
+      icon: "",
+      is_touched: false,
+      content: "",
+    },
+    active_files: [
+      { name: "", path: "", icon: "", is_touched: false, content: "" },
+    ],
+    current_bottom_tab: 1,
+    sidebar_active: true,
+    bottom_panel_active: true,
+  },
+  ui: {
+    header: [
+      {
+        name: "",
+        type: "",
+        tooltip: "",
+        shortcut: "",
+      },
+    ],
+    sidebar: [
+      {
+        name: "",
+        position: "",
+        tooltip: "",
+        shortcut: "",
+        content: "content",
+      },
+    ],
+    footer: [
+      {
+        name: "",
+        type: "extensions",
+        text: "[editor-indent]",
+        tooltip: "[editor-indent]",
+      },
+    ],
+  } as IUI,
 };
 
 export const mainSlice = createSlice({
@@ -114,6 +159,12 @@ export const mainSlice = createSlice({
     update_settings: (state, action: PayloadAction<IEditorSettings>) => {
       state.editorSettings = action.payload;
     },
+    update_ui_state: (state, action: PayloadAction<IUIState>) => {
+      state.uiState = action.payload;
+    },
+    update_ui: (state, action: PayloadAction<IUI>) => {
+      state.ui = action.payload;
+    },
   },
 });
 
@@ -133,6 +184,8 @@ export const {
   update_current_bottom_tab,
   update_output_history,
   update_settings,
+  update_ui_state,
+  update_ui,
 } = mainSlice.actions;
 
 export default mainSlice.reducer;
