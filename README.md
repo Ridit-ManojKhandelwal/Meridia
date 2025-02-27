@@ -8,6 +8,30 @@ Key Features:
 - **One-click Deployment**: Simplified deployment for faster execution of Python projects.
 - **Inbuilt Terminal**: Integrated terminal for executing commands directly within the IDE.
 - **Data-centric Workflow**: Includes tools to manage, visualize, and analyze data easily within the IDE.
+- **Mini file preview**: When hovering over a file in the Navigator for quick editor and speeding your workflow
+- **Real-Time Python Variable Results**: Instantly see output for expressions within your code. When writing print(x + y), the result (12) appears inline, reducing the need for frequent console checks.
+
+## Mini File Preview
+
+The Mini File Preview feature in Meridia enhances your workflow by allowing you to quickly preview and edit files directly from the Navigator. When hovering over a file, a preview window appears, enabling you to make edits without fully opening the file in the main editor.
+
+## Real-Time Python Variable Results
+
+Meridia enhances the coding experience by displaying live variable results directly next to your code. No need to constantly run scripts or print debug values—Meridia automatically evaluates expressions and shows the output in real time.
+How it Works:
+
+1. When writing an expression like print(x + y), the result (12) appears inline, reducing the need to check the console.
+2. Works dynamically as you modify variables, ensuring instant feedback.
+3. Supports basic arithmetic, function calls, and complex expressions to speed up debugging.
+
+This feature streamlines debugging and testing by providing immediate insights into variable values without breaking your workflow.
+
+Key benefits:
+
+1. Quick Editing: Make changes directly in the preview and save them instantly.
+2. Real-Time Sync: If the file is already open in the editor, any changes made in the preview will automatically sync with the editor, ensuring consistency across both views.
+
+This feature helps speed up development by reducing context switching and making file management more efficient.
 
 ## Features
 
