@@ -8,6 +8,30 @@ Key Features:
 - **One-click Deployment**: Simplified deployment for faster execution of Python projects.
 - **Inbuilt Terminal**: Integrated terminal for executing commands directly within the IDE.
 - **Data-centric Workflow**: Includes tools to manage, visualize, and analyze data easily within the IDE.
+- **Mini file preview**: When hovering over a file in the Navigator for quick editor and speeding your workflow
+- **Real-Time Python Variable Results**: Instantly see output for expressions within your code. When writing print(x + y), the result (12) appears inline, reducing the need for frequent console checks.
+
+## Mini File Preview
+
+The Mini File Preview feature in Meridia enhances your workflow by allowing you to quickly preview and edit files directly from the Navigator. When hovering over a file, a preview window appears, enabling you to make edits without fully opening the file in the main editor.
+
+## Real-Time Python Variable Results
+
+Meridia enhances the coding experience by displaying live variable results directly next to your code. No need to constantly run scripts or print debug values—Meridia automatically evaluates expressions and shows the output in real time.
+How it Works:
+
+1. When writing an expression like print(x + y), the result (12) appears inline, reducing the need to check the console.
+2. Works dynamically as you modify variables, ensuring instant feedback.
+3. Supports basic arithmetic, function calls, and complex expressions to speed up debugging.
+
+This feature streamlines debugging and testing by providing immediate insights into variable values without breaking your workflow.
+
+Key benefits:
+
+1. Quick Editing: Make changes directly in the preview and save them instantly.
+2. Real-Time Sync: If the file is already open in the editor, any changes made in the preview will automatically sync with the editor, ensuring consistency across both views.
+
+This feature helps speed up development by reducing context switching and making file management more efficient.
 
 ## Features
 
@@ -17,6 +41,7 @@ Key Features:
 - **Data Visualization**: Visualize data through charts, tables, and other tools directly in Meridia Studio.
 - **Drag-and-Drop**: Simply drag saved variables from the Meridia Studio and drop them into your code editor, and Meridia will auto-convert it to Python code for you.
 - **Integrated Tools**: Access built-in tools for manipulating or visualizing data stored in Meridia memory.
+- **Inbuilt Data Cleaner**: Clean data when importing the Meridia Studio.
 
 ### **Before and After Example:**
 
@@ -74,9 +99,13 @@ Launch the Meridia IDE:
 yarn start
 ```
 
+## Release
+
+Meridia 1.0 is expected to be released in under 2 months and all the features promised will be in the 1.0 version
+
 ## Vision for Meridia
 
-Meridia is designed to improve data handling within the Python ecosystem. While there are existing IDEs like VSCode and PyCharm, Meridia’s unique approach focuses on **data-centric development**.
+Meridia is designed to improve data handling within the Python ecosystem. While there are existing IDEs like VSCode and PyCharm, Meridia’s unique approach focuses on **data-centric development and fast development**.
 
 Instead of managing datasets externally, Meridia makes it possible to directly interact with datasets within the IDE, turning them into easily accessible objects that can be used directly in your code, significantly improving productivity.
 
@@ -90,7 +119,7 @@ Currently, Meridia does not support extensions or mods. However, modding functio
 
 ## Contributing
 
-We welcome contributions! If you would like to contribute to Meridia, check out our `contributing.md` file for guidelines.
+We welcome contributions! If you would like to contribute to Meridia, check out our `CONTRIBUTING.md` file for guidelines.
 
 When submitting a pull request:
 - Use descriptive titles, such as `Add feature X` or `Fix bug Y`.
