@@ -17,6 +17,7 @@ Key Features:
 - **Data Visualization**: Visualize data through charts, tables, and other tools directly in Meridia Studio.
 - **Drag-and-Drop**: Simply drag saved variables from the Meridia Studio and drop them into your code editor, and Meridia will auto-convert it to Python code for you.
 - **Integrated Tools**: Access built-in tools for manipulating or visualizing data stored in Meridia memory.
+- **Inbuilt Data Cleaner**: Clean data when importing the Meridia Studio.
 
 ### **Before and After Example:**
 
@@ -74,9 +75,13 @@ Launch the Meridia IDE:
 yarn start
 ```
 
+## Release
+
+Meridia 1.0 is expected to be released in under 2 months and all the features promised will be in the 1.0 version
+
 ## Vision for Meridia
 
-Meridia is designed to improve data handling within the Python ecosystem. While there are existing IDEs like VSCode and PyCharm, Meridia’s unique approach focuses on **data-centric development**.
+Meridia is designed to improve data handling within the Python ecosystem. While there are existing IDEs like VSCode and PyCharm, Meridia’s unique approach focuses on **data-centric development and fast development**.
 
 Instead of managing datasets externally, Meridia makes it possible to directly interact with datasets within the IDE, turning them into easily accessible objects that can be used directly in your code, significantly improving productivity.
 
@@ -90,7 +95,7 @@ Currently, Meridia does not support extensions or mods. However, modding functio
 
 ## Contributing
 
-We welcome contributions! If you would like to contribute to Meridia, check out our `contributing.md` file for guidelines.
+We welcome contributions! If you would like to contribute to Meridia, check out our `CONTRIBUTING.md` file for guidelines.
 
 When submitting a pull request:
 - Use descriptive titles, such as `Add feature X` or `Fix bug Y`.
