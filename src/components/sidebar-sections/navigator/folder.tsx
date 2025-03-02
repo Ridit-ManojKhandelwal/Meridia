@@ -285,13 +285,13 @@ const Folder = React.memo(({ handleInsertNode = () => {}, explorer }: any) => {
             type: `${explorer.name}`.split(".").at(-1),
           })}
           {explorer.name}
-          {showPreview && (
+          {/* {showPreview && (
             <div
               className="file-preview show"
               ref={previewRef}
               onClick={(e) => e.stopPropagation()}
             />
-          )}
+          )} */}
         </span>
       );
     }

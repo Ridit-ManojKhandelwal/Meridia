@@ -133,32 +133,6 @@ export const App = () => {
       );
   }, []);
 
-  // useEffect(() => {
-  //   const newState = {
-  //     active_file,
-  //     active_files,
-  //     bottom_panel_active,
-  //     sidebar_active,
-  //     current_bottom_tab,
-  //   };
-
-  //   dispatch(update_ui_state(newState));
-  //   console.log("state", newState);
-  //   window.electron.set_ui_state(newState);
-  // }, [
-  //   active_files,
-  //   sidebar_active,
-  //   bottom_panel_active,
-  //   // active_file.path,
-  //   current_bottom_tab,
-  // ]);
-
-  async function getUi() {
-    console.log("ui", await window.electron.get_ui());
-  }
-
-  getUi();
-
   return (
     <div
       className="wrapper-component"
@@ -293,6 +267,7 @@ export const App = () => {
                 className="terminal"
                 style={{
                   borderTop: "1px solid var(--main-border-color)",
+                  background: "#1e1e1e",
                 }}
               >
                 <BottomTabs />

@@ -1,12 +1,6 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
 
-import {
-  ArrowDownOutlined,
-  BarsOutlined,
-  CaretRightOutlined,
-  CodeOutlined,
-  DownOutlined,
-} from "@ant-design/icons/lib";
+import { BarsOutlined, CaretRightOutlined } from "@ant-design/icons/lib";
 
 import { useAppDispatch } from "../../../shared/hooks";
 import { useAppSelector } from "../../../shared/hooks";
@@ -19,11 +13,18 @@ import { ReactComponent as PanelBottomOff } from "../../../assets/svg/layout-pan
 import { ReactComponent as PanelLeft } from "../../../assets/svg/layout-sidebar-left.svg";
 import { ReactComponent as PanelLeftOff } from "../../../assets/svg/layout-sidebar-left-off.svg";
 
+import { ReactComponent as Minimize } from "../../../assets/window-controls/minimize.svg";
+import { ReactComponent as Maximize } from "../../../assets/window-controls/maximize.svg";
+import { ReactComponent as Restore } from "../../../assets/window-controls/restore.svg";
+import { ReactComponent as Close } from "../../../assets/window-controls/close.svg";
+
 import {
   update_sidebar_active,
   update_bottom_panel_active,
 } from "../../../shared/rdx-slice";
 import { update_current_bottom_tab } from "../../../shared/rdx-slice";
+
+import { debounce } from "lodash";
 
 import Logo from "../../../assets/logo.png";
 
@@ -33,6 +34,8 @@ export default function Header() {
   const [menuItems, setMenuItems] = useState([]);
   const [menuVisible, setMenuVisible] = useState(false);
   const [activeSubmenu, setActiveSubmenu] = useState<number | null>(null);
+  const [isMaximized, setIsMaximized] = useState<boolean | null>(true);
+
   const menuRef = useRef(null);
   const runRef = useRef<HTMLButtonElement>(null);
 
@@ -103,12 +106,30 @@ export default function Header() {
     handleRun();
   });
 
+  const toggleSidebar = useCallback(
+    debounce(() => {
+      dispatch(update_sidebar_active(!sidebar_active));
+    }, 300),
+    [sidebar_active]
+  );
+
+  const toggleBottomPanel = useCallback(
+    debounce(({ state }: { state?: any }) => {
+      if (state) {
+        dispatch(update_bottom_panel_active(state));
+      } else {
+        dispatch(update_bottom_panel_active(!bottom_panel_active));
+      }
+    }, 300),
+    [bottom_panel_active]
+  );
+
   useEffect(() => {
     const openTerminal = () => {
       if (bottom_panel_active === true && current_bottom_tab === 2) {
-        dispatch(update_bottom_panel_active(false));
+        toggleBottomPanel({ state: false });
       } else {
-        dispatch(update_bottom_panel_active(true));
+        toggleBottomPanel({ state: true });
         dispatch(update_current_bottom_tab(2));
       }
     };
@@ -123,9 +144,9 @@ export default function Header() {
   useEffect(() => {
     const openOutput = () => {
       if (bottom_panel_active && current_bottom_tab === 1) {
-        dispatch(update_bottom_panel_active(false));
+        toggleBottomPanel({ state: false });
       } else {
-        dispatch(update_bottom_panel_active(true));
+        toggleBottomPanel({ state: true });
         dispatch(update_current_bottom_tab(1));
       }
     };
@@ -151,15 +172,37 @@ export default function Header() {
 
   useEffect(() => {
     window.electron.ipcRenderer.on("open-sidebar", () => {
-      dispatch(update_sidebar_active(sidebar_active ? false : true));
+      toggleSidebar();
     });
 
     return () =>
-      window.electron.ipcRenderer.removeListener(
-        "open-sidebar",
-        update_sidebar_active
-      );
+      window.electron.ipcRenderer.removeListener("open-sidebar", toggleSidebar);
   });
+
+  useEffect(() => {
+    window.electron.ipcRenderer.on("window-changed-to-maximized", () => {
+      setIsMaximized(true);
+    });
+
+    window.electron.ipcRenderer.on("window-changed-to-restore", () => {
+      setIsMaximized(false);
+    });
+
+    return () => {
+      window.electron.ipcRenderer.removeListener(
+        "window-changed-to-maximized",
+        setIsMaximized
+      );
+      window.electron.ipcRenderer.removeListener(
+        "window-changed-to-restore",
+        setIsMaximized
+      );
+    };
+  }, []);
+
+  const handleWindowAction = (action: string) => {
+    window.electron.ipcRenderer.invoke(action, "");
+  };
 
   return (
     <div className="header-wrapper">
@@ -220,21 +263,15 @@ export default function Header() {
           </div>
         )}
       </div>
+
       <div className="controls">
-        <Tooltip text="Run ( F5 )">
-          <button onClick={handleRun} ref={runRef}>
+        <Tooltip text="Run ( F12 )">
+          <button onClick={handleRun} ref={runRef} className="run-tool">
             <CaretRightOutlined />
           </button>
         </Tooltip>
-      </div>
-      <div className="controls">
-        <button
-          onClick={() =>
-            dispatch(
-              update_bottom_panel_active(bottom_panel_active ? false : true)
-            )
-          }
-        >
+
+        <button onClick={() => toggleBottomPanel({ state: null })}>
           {bottom_panel_active ? (
             <Tooltip text="Toggle Panel ( Ctrl + ` )">
               <PanelBottom />
@@ -246,11 +283,7 @@ export default function Header() {
           )}
         </button>
 
-        <button
-          onClick={() =>
-            dispatch(update_sidebar_active(sidebar_active ? false : true))
-          }
-        >
+        <button onClick={toggleSidebar}>
           {sidebar_active ? (
             <Tooltip text="Toggle Primary Sidebar ( Ctrl + B )">
               <PanelLeft />
@@ -261,6 +294,22 @@ export default function Header() {
             </Tooltip>
           )}
         </button>
+
+        <div className="window-controls">
+          <button onClick={() => handleWindowAction("minimize")}>
+            <Minimize />
+          </button>
+          <button
+            onClick={() =>
+              handleWindowAction(isMaximized ? "restore" : "maximize")
+            }
+          >
+            {isMaximized ? <Restore /> : <Maximize />}
+          </button>
+          <button onClick={() => handleWindowAction("close")}>
+            <Close />
+          </button>
+        </div>
       </div>
     </div>
   );

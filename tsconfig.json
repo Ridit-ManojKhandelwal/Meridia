@@ -23,6 +23,7 @@
     "main/entries",
     "main/renderer",
     "main/index.ts",
-    "main/preload.ts"
+    "main/preload.ts",
+    "forge.config.ts"
   ]
 }

@@ -1,4 +1,5 @@
 .header-wrapper {
+  position: relative;
   display: flex;
   align-items: center;
   height: 40px;
@@ -104,7 +105,34 @@
 
 .controls {
   background: transparent;
-  width: 10%;
+  width: auto;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.controls .window-controls {
+  display: flex;
+  align-items: center;
+  margin-left: auto;
+}
+
+.controls .run-tool {
+  margin-right: 120px;
+  color: var(--blue);
+  fill: var(--blue);
+}
+
+.controls .window-controls button:last-child:hover {
+  background: red;
+}
+
+.controls .window-controls button svg {
+  width: 20px;
+  height: 20px;
+  display: inline-block;
+  visibility: visible;
+  opacity: 1;
 }
 
 .controls button {
@@ -117,6 +145,5 @@
 }
 
 .controls button:hover {
-  -webkit-app-region: no-drag;
   background: #37373c;
 }

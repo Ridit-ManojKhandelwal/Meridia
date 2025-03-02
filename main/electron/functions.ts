@@ -28,24 +28,32 @@ export const run_code = ({ data }: { data: { path: string } }) => {
       process = new PythonShell(path, {
         pythonPath: PythonShell.defaultPythonPath,
         mode: "text",
+        pythonOptions: ["-u"],
       });
 
       process.on("message", (message: any) => {
+        console.log("PythonShell Message:", message);
         mainWindow?.webContents.send("received-output", message);
       });
     }
 
-    if (process.stdout) {
+    // Handle stdout only for JS, as PythonShell already manages output
+    if (path.endsWith(".js") && process.stdout) {
       process.stdout.on("data", (output: any) => {
-        mainWindow?.webContents.send("received-output", output.toString());
+        console.log("STDOUT:", output.toString().trim());
+        mainWindow?.webContents.send(
+          "received-output",
+          output.toString().trim()
+        );
       });
     }
 
     if (process.stderr) {
       process.stderr.on("data", (error: any) => {
+        console.error("STDERR:", error.toString().trim());
         mainWindow?.webContents.send(
           "received-output",
-          `Error: ${error.toString()}`
+          `Error: ${error.toString().trim()}`
         );
       });
     }

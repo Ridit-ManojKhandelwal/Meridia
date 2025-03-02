@@ -2,72 +2,35 @@ import React, { useCallback, useEffect } from "react";
 import { MainContext } from "../shared/functions";
 import { get_file_types } from "../shared/functions";
 import { useAppDispatch, useAppSelector } from "../shared/hooks";
-import { IFolderStructure, TSelectedFile } from "../shared/types";
+import { TSelectedFile } from "../shared/types";
 import { update_active_files, update_indent } from "../shared/rdx-slice";
 import { store } from "../shared/store";
-
 import oneDark from "../../theme/oneDark.json";
 import pythonLangData from "../../extensions/languages/python/python.json";
-
 import { App } from "./app";
-
 import * as monaco from "monaco-editor";
-import start, { E_EDITOR_THEME } from "monaco-python";
 
 const MainComponent = React.memo((props: any) => {
   const editor_ref = React.useRef<
     monaco.editor.IStandaloneCodeEditor | undefined
   >();
-  const editor_files_ref = React.useRef<
-    { editor_id: string; editor_state: monaco.editor.ICodeEditorViewState }[]
-  >([]);
-  const dispatch = useAppDispatch();
-  const active_files = useAppSelector((state) => state.main.active_files);
 
   const settings = useAppSelector((state) => state.main.editorSettings);
+
+  const dispatch = useAppDispatch();
 
   useEffect(() => {
     if (!editor_ref.current) return;
     editor_ref.current.updateOptions(settings);
   }, [settings]);
 
-  const handle_set_editor = useCallback(
-    async (selected_file: TSelectedFile) => {
-      console.log("selected_file", selected_file);
+  function normalizePath(path: string) {
+    return path.replace(/^\/(\w):\/.*$/, "$1:/");
+  }
 
-      const selectedExtension = selected_file.name.split(".").pop();
-
-      if (editor_ref.current) {
-        const current_model = editor_ref.current.getModel();
-        if (current_model) {
-          const state = editor_ref.current.saveViewState();
-          const current_model_index = editor_files_ref.current.findIndex(
-            (editor) => editor.editor_id === current_model.uri.path
-          );
-
-          if (current_model_index > -1) {
-            editor_files_ref.current.splice(current_model_index, 1);
-          }
-
-          editor_files_ref.current.push({
-            editor_id: current_model.uri.path,
-            editor_state: state,
-          });
-        }
-      }
-
-      // Check if model already exists before creating a new one
-      let new_model = monaco.editor
-        .getModels()
-        .find((model) => model.uri.path === selected_file.path);
-
-      if (!new_model) {
-        new_model = monaco.editor.createModel(
-          selected_file.content || "",
-          get_file_types(selected_file.name) || "plaintext",
-          monaco.Uri.parse(selected_file.path)
-        );
-      }
+  const handle_set_editor = React.useCallback(
+    (selected_file: TSelectedFile) => {
+      console.log("Setting editor for:", selected_file);
 
       monaco.languages.typescript.typescriptDefaults.setCompilerOptions({
         jsx: 4,
@@ -88,10 +51,13 @@ const MainComponent = React.memo((props: any) => {
       });
 
       if (!editor_ref.current) {
+        console.log("Creating new editor instance...");
         editor_ref.current = monaco.editor.create(
           document.querySelector(".editor-container"),
           {
             theme: settings.theme,
+            language: get_file_types(selected_file.name),
+
             fontSize: settings.fontSize,
             fontFamily: settings.fontFamily,
             cursorBlinking: settings.cursorBlinking,
@@ -118,51 +84,61 @@ const MainComponent = React.memo((props: any) => {
         );
       }
 
-      editor_ref.current.setModel(new_model);
+      let targetModel = monaco.editor
+        .getModels()
+        .find(
+          (model) =>
+            model.uri.toString() ===
+            monaco.Uri.file(selected_file.path).toString()
+        );
 
-      editor_ref.current.addCommand(
-        monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyS,
-        () => {
-          handle_save_file({
-            path: editor_ref.current.getModel().uri.path,
-            content: editor_ref.current.getValue(),
-          });
-        }
-      );
+      if (!targetModel) {
+        console.log("Creating new model for:", selected_file.path);
+        targetModel = monaco.editor.createModel(
+          selected_file.content,
+          get_file_types(selected_file.name),
+          monaco.Uri.file(selected_file.path)
+        );
+      } else {
+        console.log("Reusing existing model:", targetModel.uri.toString());
+      }
 
       editor_ref.current.onDidChangeModelContent(() => {
-        // const model_editing_index = store
-        //   .getState()
-        //   .main.active_files.findIndex(
-        //     (file) => file.path === editor_ref.current.getModel().uri.path
-        //   );
-
-        // const model_editing = {
-        //   ...store.getState().main.active_files[model_editing_index],
-        // };
-        // const _active_file = [...store.getState().main.active_files];
-
-        // model_editing.is_touched = true;
-        // model_editing.content = editor_ref.current.getModel().getValue();
-        // _active_file[model_editing_index] = model_editing;
-        // dispatch(update_active_files(_active_file));
-
-        if (!editor_ref.current || !editor_ref.current.getModel()) return;
-
-        const filePath = editor_ref.current.getModel().uri.path;
-        const fileIndex = store
+        const model_editing_index = store
           .getState()
-          .main.active_files.findIndex((file) => file.path === filePath);
+          .main.active_files.findIndex(
+            (file) =>
+              normalizePath(file.path) ===
+              normalizePath(editor_ref.current?.getModel()?.uri.path || "")
+          );
 
-        if (fileIndex !== -1) {
-          const updatedFiles = [...store.getState().main.active_files];
-          updatedFiles[fileIndex] = {
-            ...updatedFiles[fileIndex],
+        const model_editing_index1 = store
+          .getState()
+          .main.active_files.findIndex(
+            (file) =>
+              normalizePath(file.path) ===
+              normalizePath(editor_ref.current?.getModel()?.uri.path || "")
+          );
+
+        console.log(
+          "Normalized file path:",
+          store
+            .getState()
+            .main.active_files.find((file) => normalizePath(file.path))
+        );
+        console.log(
+          "Normalized Monaco path:",
+          normalizePath(editor_ref.current?.getModel()?.uri.path || "")
+        );
+        console.log("Found index:", model_editing_index1);
+
+        if (model_editing_index > -1) {
+          const updated_files = [...store.getState().main.active_files];
+          updated_files[model_editing_index] = {
+            ...updated_files[model_editing_index],
             is_touched: true,
-            content: editor_ref.current.getValue(),
           };
-
-          dispatch(update_active_files(updatedFiles));
+          dispatch(update_active_files(updated_files));
         }
       });
 
@@ -174,6 +150,16 @@ const MainComponent = React.memo((props: any) => {
           })
         );
       });
+
+      editor_ref.current.addCommand(
+        monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyS,
+        () => {
+          handle_save_file({
+            path: editor_ref.current.getModel().uri.path,
+            content: editor_ref.current.getValue(),
+          });
+        }
+      );
 
       monaco.languages.registerCompletionItemProvider("python", {
         provideCompletionItems: (model, position) => {
@@ -206,60 +192,36 @@ const MainComponent = React.memo((props: any) => {
         },
       });
 
-      const updatePrintDecorations = async () => {
-        const editor = editor_ref.current;
-        if (!editor) return;
-
-        const model = editor.getModel();
-        if (!model) return;
-
-        const code = model.getValue();
-        const outputMap = (await window.electron.run_python_code(code)) || {}; // ✅ Ensure valid object
-
-        console.log(outputMap);
-
-        if (!outputMap || typeof outputMap !== "object") {
-          console.warn("Invalid outputMap received:", outputMap);
-          return;
-        }
-
-        const decorations = Object.entries(outputMap).map(([line, output]) => ({
-          range: new monaco.Range(parseInt(line), 1, parseInt(line), 1),
-          options: {
-            isWholeLine: false,
-            after: {
-              content: ` ⟶ ${output}`,
-              inlineClassName: "print-output-decoration",
-            },
-          },
-        }));
-
-        editor.deltaDecorations([], decorations);
-      };
-
-      editor_ref.current.onDidChangeModelContent(() => {
-        // updatePrintDecorations();
-      });
+      editor_ref.current.setModel(targetModel);
     },
-    [editor_ref.current, editor_files_ref.current, active_files]
+    []
   );
 
   const handle_save_file = React.useCallback(
     (data: { path: string; content: string }) => {
-      window.electron.save_file(data);
+      const newDataPath = normalizePath(data.path);
+      window.electron.save_file({ path: newDataPath, content: data.content });
+
+      console.log("save data", normalizePath(data.path));
 
       setTimeout(() => {
-        const model_editing_index = store
-          .getState()
-          .main.active_files.findIndex((file) => file.path == data.path);
-        const model_editing = {
-          ...store.getState().main.active_files[model_editing_index],
-        };
-        const _active_file = [...store.getState().main.active_files];
+        const state = store.getState();
+        const model_editing_index = state.main.active_files.findIndex(
+          (file) => normalizePath(file.path) === normalizePath(data.path)
+        );
 
-        model_editing.is_touched = false;
-        _active_file[model_editing_index] = model_editing;
-        dispatch(update_active_files(_active_file));
+        if (model_editing_index === -1) {
+          console.warn(`File not found in active_files: ${data.path}`);
+          return;
+        }
+
+        const updated_files = [...state.main.active_files];
+        updated_files[model_editing_index] = {
+          ...updated_files[model_editing_index],
+          is_touched: false,
+        };
+
+        dispatch(update_active_files(updated_files));
       }, 0);
     },
     []
@@ -267,39 +229,37 @@ const MainComponent = React.memo((props: any) => {
 
   const handle_remove_editor = React.useCallback(
     (selected_file: TSelectedFile) => {
-      console.log("selected_file", selected_file);
+      console.log("Removing editor for:", selected_file);
 
-      const is_current_model =
-        editor_ref.current.getModel().uri.path == selected_file.path;
-      const allModels = monaco.editor.getModels();
-      const target_model_index = allModels.findIndex(
-        (model) => model.uri.path == selected_file.path
-      );
-      // monaco.editor.add
-      // monaco.editor.getModels().splice(target_model_index, 1)
-      console.log(
-        "monaco.editor.getModels().length",
-        monaco.editor.getModels().length
-      );
-      monaco.editor.getModels()[target_model_index].dispose();
+      const targetModel = monaco.editor
+        .getModels()
+        .find(
+          (model) =>
+            model.uri.toString() ===
+            monaco.Uri.file(selected_file.path).toString()
+        );
 
-      console.log(
-        "monaco.editor.getModels().length",
-        monaco.editor.getModels().length
-      );
-      if (is_current_model) {
-        const new_index =
-          target_model_index == 0 ? target_model_index : target_model_index - 1;
+      if (targetModel) {
+        console.log("Disposing model:", targetModel.uri.toString());
+        targetModel.dispose();
+      } else {
+        console.warn("Model not found:", selected_file.path);
+      }
 
-        if (monaco.editor.getModels().length > 0) {
-          editor_ref.current.setModel(monaco.editor.getModels()[new_index]);
+      const remainingModels = monaco.editor.getModels();
+
+      if (editor_ref.current) {
+        if (remainingModels.length > 0) {
+          console.log("Switching to another model...");
+          editor_ref.current.setModel(remainingModels[0]);
         } else {
+          console.log("No models left. Disposing editor...");
           editor_ref.current.dispose();
           editor_ref.current = undefined;
         }
       }
     },
-    [editor_ref.current]
+    []
   );
 
   const handle_win_blur = React.useCallback(() => {
@@ -307,14 +267,23 @@ const MainComponent = React.memo((props: any) => {
 
     const blurred_active_files = store
       .getState()
-      .main.active_files.filter((file) => file.is_touched == true);
+      .main.active_files.filter((file) => file.is_touched === true);
+
     blurred_active_files.forEach((file) => {
+      const model = monaco.editor
+        .getModels()
+        .find(
+          (model) => normalizePath(model.uri.path) === normalizePath(file.path)
+        );
+
+      if (!model) {
+        console.warn(`No model found for path: ${file.path}`);
+        return;
+      }
+
       handle_save_file({
         path: file.path,
-        content: monaco.editor
-          .getModels()
-          .find((model) => model.uri.path == file.path)
-          .getValue(),
+        content: model.getValue(),
       });
     });
   }, []);

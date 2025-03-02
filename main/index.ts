@@ -212,7 +212,7 @@ export const MenuTemplate = [
         click: () => {
           mainWindow.webContents.send("run-current-file");
         },
-        accelerator: "F5",
+        accelerator: "F12",
       },
       {
         label: "Bottom Panel",
@@ -299,7 +299,7 @@ export const MenuTemplate = [
         click: () => {
           mainWindow.webContents.send("run-code-manual");
         },
-        accelerator: "F5",
+        accelerator: "F12",
       },
       { label: "Start Debugging" },
       { label: "Run Without Debugging" },
@@ -363,7 +363,7 @@ if (!fs.existsSync(UI_JSON_PATH))
           name: "Run",
           type: "run-file",
           tooltip: "Run",
-          shortcut: "F5",
+          shortcut: "F12",
         },
       ],
       sidebar: [
@@ -838,14 +838,9 @@ const createWindow = (): void => {
   mainWindow = new BrowserWindow({
     height: 600,
     width: 800,
-    titleBarStyle: "hidden",
-    titleBarOverlay: {
-      color: "#2b2b2b",
-      height: 40,
-      symbolColor: "#ffffff",
-    },
-    title: "Anantam",
-    icon: path.join(__dirname, "assets/icon.ico"),
+    frame: false,
+    title: "Meridia",
+    icon: path.join(__dirname, "..", "..", "src", "assets/icon.ico"),
     webPreferences: {
       preload: MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY,
       // nodeIntegration: true,
@@ -855,6 +850,29 @@ const createWindow = (): void => {
 
   mainWindow.on("close", () => {
     mainWindow.webContents.send("handle-window-closing");
+  });
+  ipcMain.handle("minimize", () => {
+    mainWindow.minimize();
+  });
+
+  ipcMain.handle("close", () => {
+    mainWindow.close();
+  });
+
+  ipcMain.handle("maximize", () => {
+    mainWindow.maximize();
+  });
+
+  ipcMain.handle("restore", () => {
+    mainWindow.restore();
+  });
+
+  mainWindow.on("maximize", () => {
+    mainWindow.webContents.send("window-changed-to-maximized");
+  });
+
+  mainWindow.on("unmaximize", () => {
+    mainWindow.webContents.send("window-changed-to-restore");
   });
 
   ipcMain.handle("get-menu", () => {

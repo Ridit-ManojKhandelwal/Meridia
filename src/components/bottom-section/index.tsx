@@ -1,4 +1,3 @@
-import { useState, useRef, useEffect } from "react";
 import { useAppDispatch, useAppSelector } from "../../shared/hooks";
 import {
   update_current_bottom_tab,
@@ -13,16 +12,6 @@ import { CloseOutlined } from "@ant-design/icons/lib";
 export const BottomTabs = () => {
   const currentTab = useAppSelector((state) => state.main.current_bottom_tab);
   const dispatch = useAppDispatch();
-
-  const historyRef: any = useRef({
-    output: [],
-    terminal: [],
-    packageManager: [],
-  });
-
-  const updateHistory = (tab: any, data: any) => {
-    historyRef.current[tab].push(data);
-  };
 
   return (
     <div
@@ -57,16 +46,10 @@ export const BottomTabs = () => {
       <PerfectScrollbar>
         <div className="tab-content" style={{ flex: 1, overflow: "hidden" }}>
           <div style={{ display: currentTab === 1 ? "block" : "none" }}>
-            <Output
-              history={historyRef.current.output}
-              updateHistory={updateHistory}
-            />
+            <Output />
           </div>
           <div style={{ display: currentTab === 2 ? "block" : "none" }}>
-            <Terminal
-              history={historyRef.current.terminal}
-              updateHistory={updateHistory}
-            />
+            <Terminal />
           </div>
         </div>
       </PerfectScrollbar>

@@ -19,7 +19,7 @@ ipcRenderer.on("new-folder-opened", (event, data) => {
 });
 
 ipcRenderer.on("received-output", (_, data) => {
-  const parentDiv = document.querySelector("#output-parent");
+  const parentDiv = document.querySelector(".output-parent");
   if (!parentDiv) return;
 
   let outputDiv = document.querySelector("#output");
@@ -29,8 +29,10 @@ ipcRenderer.on("received-output", (_, data) => {
     parentDiv.appendChild(outputDiv);
   }
 
-  outputDiv.innerHTML = data;
-  ipcRenderer.send("update-output", data);
+  // Append instead of replacing
+  const newLine = document.createElement("div");
+  newLine.textContent = data;
+  outputDiv.appendChild(newLine);
 
-  ipcRenderer.send("update-output-history", data);
+  console.log("output", data);
 });

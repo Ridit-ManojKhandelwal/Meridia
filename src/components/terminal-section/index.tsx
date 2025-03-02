@@ -3,7 +3,7 @@ import { Terminal as XTerminal } from "xterm";
 import { FitAddon } from "xterm-addon-fit";
 import "@xterm/xterm/css/xterm.css";
 
-export const Terminal = ({ history, updateHistory }: any) => {
+export const Terminal = () => {
   const terminalRef = useRef<HTMLDivElement | null>(null);
   const terminalInstance = useRef(null);
   const fitAddon = useRef(null);
@@ -46,8 +46,6 @@ export const Terminal = ({ history, updateHistory }: any) => {
     fit.fit();
     terminalInstance.current = term;
 
-    history.forEach((line: any) => term.write(line));
-
     window.electron.ipcRenderer.send("terminal.keystroke", "\r");
 
     const sendResizeRequest = () => {
@@ -78,7 +76,6 @@ export const Terminal = ({ history, updateHistory }: any) => {
       "terminal.incomingData",
       (_event: any, data: any) => {
         term.write(data);
-        updateHistory("terminal", data);
       }
     );
 
