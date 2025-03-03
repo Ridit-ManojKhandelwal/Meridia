@@ -11,7 +11,7 @@ Key Features:
 - **Mini file preview**: When hovering over a file in the Navigator for quick editor and speeding your workflow
 - **Real-Time Python Variable Results**: Instantly see output for expressions within your code. When writing print(x + y), the result (12) appears inline, reducing the need for frequent console checks.
 
-## Mini File Preview
+## Mini File Preview ( Avaiable in V2 )
 
 The Mini File Preview feature in Meridia enhances your workflow by allowing you to quickly preview and edit files directly from the Navigator. When hovering over a file, a preview window appears, enabling you to make edits without fully opening the file in the main editor.
 
